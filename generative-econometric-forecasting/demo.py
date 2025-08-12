@@ -16,6 +16,7 @@ warnings.filterwarnings('ignore')
 # Import our modules
 from src.models.forecasting_models import EconometricForecaster
 from src.agents.narrative_generator import EconomicNarrativeGenerator
+from src.agents.demand_planner import GenAIDemandPlanner, generate_comprehensive_demand_analysis
 
 # Set style for plots
 plt.style.use('seaborn-v0_8')
@@ -360,6 +361,110 @@ underlying economic conditions.
         
         print(f"✅ All results saved to demo_outputs/ directory")
     
+    def generate_demand_planning_demo(self):
+        """Generate demand planning analysis using forecast results."""
+        print(f"\n🎯 Generating GenAI Demand Planning Analysis...")
+        
+        if not self.forecast_results:
+            print("   ⚠️ No forecast results available for demand planning")
+            return {}
+        
+        try:
+            # Convert forecast results to format expected by demand planner
+            formatted_forecasts = {}
+            for indicator, results in self.forecast_results.items():
+                ensemble_result = results.get('ensemble', results.get('arima'))
+                if ensemble_result:
+                    formatted_forecasts[indicator] = ensemble_result
+            
+            # Generate comprehensive demand analysis
+            print("   🤖 Analyzing demand scenarios with AI...")
+            demand_analysis = generate_comprehensive_demand_analysis(
+                formatted_forecasts, 
+                industry="retail",
+                customer_context="B2C retail customers across different economic segments"
+            )
+            
+            print(f"   ✅ Generated {len(demand_analysis.get('demand_scenarios', []))} demand scenarios")
+            print(f"   ✅ Analyzed {len(demand_analysis.get('customer_segments', []))} customer segments")
+            print(f"   ✅ Created executive demand planning report")
+            
+            return demand_analysis
+            
+        except Exception as e:
+            print(f"   ❌ Error generating demand planning analysis: {e}")
+            return self._generate_mock_demand_analysis()
+    
+    def _generate_mock_demand_analysis(self):
+        """Generate mock demand analysis when AI is not available."""
+        return {
+            'demand_scenarios': [
+                {
+                    'scenario_name': 'Economic Stability Scenario',
+                    'probability': 0.6,
+                    'demand_impact': 'Stable demand with 2-3% growth',
+                    'key_drivers': ['Steady employment', 'Moderate inflation'],
+                    'business_implications': ['Maintain current inventory levels', 'Focus on efficiency'],
+                    'recommended_actions': ['Monitor market trends', 'Optimize supply chain']
+                },
+                {
+                    'scenario_name': 'Economic Growth Scenario', 
+                    'probability': 0.25,
+                    'demand_impact': 'Increased demand by 8-12%',
+                    'key_drivers': ['Strong GDP growth', 'Rising consumer confidence'],
+                    'business_implications': ['Scale up production', 'Expand inventory'],
+                    'recommended_actions': ['Increase procurement', 'Enhance capacity']
+                },
+                {
+                    'scenario_name': 'Economic Slowdown Scenario',
+                    'probability': 0.15, 
+                    'demand_impact': 'Decreased demand by 5-8%',
+                    'key_drivers': ['Rising unemployment', 'Inflation pressures'],
+                    'business_implications': ['Reduce inventory', 'Focus on essentials'],
+                    'recommended_actions': ['Optimize costs', 'Diversify product mix']
+                }
+            ],
+            'customer_segments': [
+                {
+                    'segment_name': 'Price-Sensitive Consumers',
+                    'demand_sensitivity': 'High',
+                    'key_characteristics': ['Budget-conscious', 'Value-seeking'],
+                    'purchasing_patterns': ['Promotional buying', 'Essential focus']
+                },
+                {
+                    'segment_name': 'Premium Customers',
+                    'demand_sensitivity': 'Low', 
+                    'key_characteristics': ['Quality-focused', 'Brand loyal'],
+                    'purchasing_patterns': ['Consistent purchasing', 'Premium preferences']
+                }
+            ],
+            'executive_report': """
+DEMAND PLANNING EXECUTIVE SUMMARY
+
+Economic Environment Impact:
+Based on current economic forecasts, we anticipate a stable demand environment with moderate growth potential. GDP indicators suggest steady expansion while employment levels remain supportive of consumer spending.
+
+Demand Scenario Analysis:
+Three primary scenarios emerge: Economic Stability (60% probability) suggests 2-3% demand growth, Economic Growth (25% probability) indicates 8-12% demand increase, and Economic Slowdown (15% probability) projects 5-8% demand decline.
+
+Customer Segment Insights:
+Price-sensitive consumers show high sensitivity to economic changes and focus on value, while premium customers demonstrate lower sensitivity and maintain quality preferences.
+
+Strategic Recommendations:
+- Maintain flexible inventory strategies to adapt to scenario outcomes
+- Focus on operational efficiency in the base case scenario
+- Prepare scaling capabilities for growth scenarios
+- Develop cost optimization plans for slowdown scenarios
+
+Key Performance Indicators to Monitor:
+- Consumer confidence indices
+- Unemployment rate changes
+- Inflation trends
+- Retail sales data
+            """,
+            'analysis_timestamp': datetime.now().isoformat()
+        }
+    
     def run_complete_demo(self):
         """Run the complete demo workflow."""
         print("\n🎯 Running Complete Demo Workflow")
@@ -374,10 +479,13 @@ underlying economic conditions.
         # Step 3: Generate narratives
         narratives = self.generate_ai_narratives()
         
-        # Step 4: Create visualizations
+        # Step 4: Generate demand planning analysis
+        demand_analysis = self.generate_demand_planning_demo()
+        
+        # Step 5: Create visualizations
         self.create_visualizations()
         
-        # Step 5: Save results
+        # Step 6: Save results
         self.save_demo_results()
         
         # Final summary
@@ -386,17 +494,22 @@ underlying economic conditions.
         print(f"📊 Analyzed {len(self.demo_data)} economic indicators")
         print(f"🔮 Generated forecasts using ARIMA and ensemble methods")
         print(f"📝 Created {len(narratives)} AI-powered narratives")
+        print(f"🎯 Generated {len(demand_analysis.get('demand_scenarios', []))} demand scenarios")
+        print(f"👥 Analyzed {len(demand_analysis.get('customer_segments', []))} customer segments")
         print(f"📈 Saved visualizations and results to demo_outputs/")
         print(f"\n💡 This demonstrates the platform's ability to:")
         print(f"   • Automatically model complex economic time series")
         print(f"   • Generate accurate forecasts with confidence intervals") 
         print(f"   • Create executive-ready insights and recommendations")
+        print(f"   • Perform GenAI-powered demand scenario planning")
+        print(f"   • Analyze customer segments and business implications")
         print(f"   • Provide comprehensive analysis workflows")
         
         return {
             'data': self.demo_data,
             'forecasts': self.forecast_results,
-            'narratives': narratives
+            'narratives': narratives,
+            'demand_analysis': demand_analysis
         }
 
 

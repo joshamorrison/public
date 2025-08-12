@@ -15,6 +15,7 @@ from typing import Dict, List, Any, Optional
 from data.fred_client import FredDataClient, validate_data_quality
 from models.forecasting_models import EconometricForecaster, analyze_forecast_accuracy
 from agents.narrative_generator import EconomicNarrativeGenerator, format_forecast_report
+from agents.demand_planner import GenAIDemandPlanner, generate_comprehensive_demand_analysis
 
 # Configure logging
 logging.basicConfig(
@@ -32,12 +33,14 @@ class EconometricForecastingPlatform:
         self.fred_client = FredDataClient(fred_api_key)
         self.forecaster = EconometricForecaster()
         self.narrative_generator = EconomicNarrativeGenerator()
+        self.demand_planner = GenAIDemandPlanner()
         
         # Storage for results
         self.data = {}
         self.forecasts = {}
         self.narratives = {}
         self.reports = {}
+        self.demand_analysis = {}
         
         logger.info("Econometric Forecasting Platform initialized")
     
@@ -290,23 +293,69 @@ class EconometricForecastingPlatform:
         
         logger.info(f"Saved forecast data to {forecast_file}")
     
+    def generate_demand_planning_analysis(self, industry: str = "retail",
+                                         customer_context: str = "B2C retail customers") -> Dict[str, Any]:
+        """
+        Generate comprehensive demand planning analysis.
+        
+        Args:
+            industry: Industry context for demand planning
+            customer_context: Description of customer base
+        
+        Returns:
+            Comprehensive demand planning analysis
+        """
+        if not self.forecasts:
+            logger.warning("No forecasts available for demand planning. Run forecasting first.")
+            return {}
+        
+        logger.info("Generating comprehensive demand planning analysis")
+        
+        try:
+            # Convert forecasts to format expected by demand planner
+            formatted_forecasts = {}
+            for indicator, models in self.forecasts.items():
+                # Use ensemble if available, otherwise use first available model
+                if 'ensemble' in models:
+                    formatted_forecasts[indicator] = models['ensemble']
+                elif models:
+                    formatted_forecasts[indicator] = list(models.values())[0]
+            
+            # Generate comprehensive demand analysis
+            demand_analysis = generate_comprehensive_demand_analysis(
+                formatted_forecasts, industry, customer_context
+            )
+            
+            self.demand_analysis = demand_analysis
+            logger.info("Completed demand planning analysis")
+            
+            return demand_analysis
+            
+        except Exception as e:
+            logger.error(f"Error generating demand planning analysis: {e}")
+            return {}
+    
     def run_full_analysis(self, indicators: List[str] = None,
                          forecast_horizon: int = 12,
                          start_date: str = '2010-01-01',
-                         save_outputs: bool = True) -> Dict[str, Any]:
+                         save_outputs: bool = True,
+                         include_demand_planning: bool = True,
+                         industry: str = "retail") -> Dict[str, Any]:
         """
-        Run complete forecasting analysis pipeline.
+        Run complete forecasting and demand planning analysis pipeline.
         
         Args:
             indicators: Economic indicators to analyze
             forecast_horizon: Number of periods to forecast
             start_date: Start date for historical data
             save_outputs: Whether to save results to files
+            include_demand_planning: Whether to include GenAI demand planning
+            industry: Industry context for demand planning
         
         Returns:
             Dictionary with all results
         """
-        logger.info("Starting full econometric forecasting analysis")
+        logger.info("Starting full econometric forecasting and demand planning analysis")
         
         # Load data
         data = self.load_economic_data(indicators, start_date)
@@ -324,6 +373,11 @@ class EconometricForecastingPlatform:
         # Generate dashboard summary
         dashboard = self.generate_dashboard_summary()
         
+        # Generate demand planning analysis if requested
+        demand_analysis = {}
+        if include_demand_planning:
+            demand_analysis = self.generate_demand_planning_analysis(industry)
+        
         # Save results
         if save_outputs:
             self.save_results()
@@ -333,10 +387,11 @@ class EconometricForecastingPlatform:
             'forecast_summary': {indicator: list(forecasts.keys()) for indicator, forecasts in forecasts.items()},
             'narratives': narratives,
             'dashboard_summary': dashboard,
+            'demand_analysis': demand_analysis,
             'reports': self.reports
         }
         
-        logger.info("Completed full econometric forecasting analysis")
+        logger.info("Completed full econometric forecasting and demand planning analysis")
         return results
 
 
@@ -355,6 +410,12 @@ def main():
                        help='Directory to save outputs')
     parser.add_argument('--no-save', action='store_true',
                        help='Do not save outputs to files')
+    parser.add_argument('--include-demand-planning', action='store_true', default=True,
+                       help='Include GenAI demand planning analysis')
+    parser.add_argument('--industry', default='retail',
+                       help='Industry context for demand planning (e.g., retail, manufacturing, services)')
+    parser.add_argument('--no-demand-planning', action='store_true',
+                       help='Skip demand planning analysis')
     
     args = parser.parse_args()
     
@@ -367,20 +428,32 @@ def main():
             indicators=args.indicators,
             forecast_horizon=args.forecast_horizon,
             start_date=args.start_date,
-            save_outputs=not args.no_save
+            save_outputs=not args.no_save,
+            include_demand_planning=not args.no_demand_planning,
+            industry=args.industry
         )
         
         # Print summary
         print("\n" + "="*60)
-        print("ECONOMETRIC FORECASTING ANALYSIS COMPLETE")
+        print("ECONOMETRIC FORECASTING & DEMAND PLANNING ANALYSIS COMPLETE")
         print("="*60)
         print(f"Indicators analyzed: {len(results['data_summary'])}")
         print(f"Forecasts generated: {sum(len(f) for f in results['forecast_summary'].values())}")
         print(f"Narratives created: {len(results['narratives'])}")
         
-        print(f"\nDASHBOARD SUMMARY:")
-        print("-" * 30)
+        if results.get('demand_analysis'):
+            demand_analysis = results['demand_analysis']
+            print(f"Demand scenarios: {len(demand_analysis.get('demand_scenarios', []))}")
+            print(f"Customer segments: {len(demand_analysis.get('customer_segments', []))}")
+        
+        print(f"\nECONOMIC DASHBOARD SUMMARY:")
+        print("-" * 40)
         print(results['dashboard_summary'])
+        
+        if results.get('demand_analysis') and results['demand_analysis'].get('executive_report'):
+            print(f"\nDEMAND PLANNING EXECUTIVE REPORT:")
+            print("-" * 40)
+            print(results['demand_analysis']['executive_report'][:500] + "..." if len(results['demand_analysis']['executive_report']) > 500 else results['demand_analysis']['executive_report'])
         
         if not args.no_save:
             print(f"\nResults saved to: {args.output_dir}/")
