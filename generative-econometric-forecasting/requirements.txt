@@ -1,35 +1,71 @@
-# Generative Econometric Forecasting Platform
-# Core dependencies
+# Generative Econometric Forecasting & Demand Planning Platform
+# Production Dependencies
 
-# Data Science and Analytics
+# =====================================
+# CORE DATA SCIENCE & ANALYTICS
+# =====================================
 pandas>=2.0.0
 numpy>=1.24.0
 scipy>=1.11.0
 scikit-learn>=1.3.0
 
-# Time Series and Econometric Modeling
+# =====================================
+# TIME SERIES & ECONOMETRIC MODELING
+# =====================================
 statsmodels>=0.14.0
 prophet>=1.1.0
 fredapi>=0.5.0
 
-# LangChain and AI Integration
+# =====================================
+# AI & LANGCHAIN INTEGRATION
+# =====================================
 langchain>=0.1.0
 langchain-openai>=0.1.0
 langchain-community>=0.1.0
 langchain-core>=0.1.0
 openai>=1.10.0
 
-# Environment and Configuration
+# =====================================
+# ENVIRONMENT & CONFIGURATION
+# =====================================
 python-dotenv>=1.0.0
 pydantic>=2.0.0
 pyyaml>=6.0
 
-# Visualization and Reporting
+# =====================================
+# VISUALIZATION & REPORTING
+# =====================================
 matplotlib>=3.7.0
 seaborn>=0.12.0
 plotly>=5.17.0
 
-# Development and Testing
+# =====================================
+# UTILITIES & LOGGING
+# =====================================
+tqdm>=4.65.0
+colorama>=0.4.6
+
+# =====================================
+# DEVELOPMENT & TESTING (Optional)
+# =====================================
 pytest>=7.4.0
 black>=23.0.0
 flake8>=6.0.0
+jupyter>=1.0.0
+
+# =====================================
+# INSTALLATION NOTES
+# =====================================
+# 
+# Quick Install:
+# pip install -r requirements.txt
+#
+# For Apple Silicon (M1/M2) users:
+# pip install --no-binary :all: statsmodels
+# 
+# For Windows users with Prophet issues:
+# conda install prophet
+# 
+# Minimal install (demo only):
+# pip install pandas numpy matplotlib seaborn scikit-learn
+#
