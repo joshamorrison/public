@@ -1,0 +1,5 @@
+{
+  "model_name": "custom_cnn",
+  "num_classes": 2,
+  "pretrained": false
+}

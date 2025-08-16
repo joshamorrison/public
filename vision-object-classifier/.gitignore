@@ -1,0 +1,121 @@
+# Environment variables and secrets
+.env
+.env.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# PyTorch models and checkpoints (exclude training artifacts but keep production models)
+*.ckpt
+
+# Training artifacts and temporary models
+models/best_model_epoch_*.pth
+models/checkpoint_*.pth
+models/temp_*.pth
+models/*_epoch_*.pth
+models/training_*.pth
+
+# Large model files (>100MB GitHub limit)
+models/best_model_resnet50.pth
+
+# Keep these production-ready models for out-of-box experience:
+!models/final_balanced_model.pth
+!models/balanced_config.json
+
+# Training outputs and logs
+logs/
+runs/
+*.log
+training_history.png
+*.csv
+results/
+outputs/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# Data files (exclude bulk training data but keep sample images for demo)
+*.zip
+*.tar.gz
+
+# Exclude most training images but keep a few samples for out-of-box demo
+data/clean/0*.jpg
+data/clean/generated_*.jpg
+data/dirty/0*.jpg
+data/dirty/*_dirty_*.jpg
+data/dirty/generated_*_dirty_*.jpg
+
+# Keep these demo images for immediate testing:
+!data/clean/plate_01.jpg
+!data/clean/bowl_06.jpg  
+!data/dirty/plate_01_dirty_medium_02.jpg
+!data/dirty/bowl_06_dirty_heavy_03.jpg
+!data/dirty/real_dirty_pasta_plate.jpg
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/
+
+# Test coverage
+.coverage
+htmlcov/
+.pytest_cache/
+
+# MLflow
+mlruns/
+mlartifacts/
+
+# Cache
+.cache/
+.mypy_cache/
+.dmypy.json
+dmypy.json
