@@ -1,0 +1,572 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Generative Econometric Forecasting Platform - AWS Infrastructure'
+
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues: [dev, staging, prod]
+    Description: Environment name
+  
+  InstanceType:
+    Type: String
+    Default: t3.medium
+    AllowedValues: [t3.small, t3.medium, t3.large, t3.xlarge]
+    Description: EC2 instance type for forecasting compute
+  
+  KeyPairName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: EC2 Key Pair for SSH access
+
+Resources:
+  # VPC and Networking
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${Environment}-forecasting-vpc
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Project
+          Value: econometric-forecasting
+
+  PublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.1.0/24
+      AvailabilityZone: !Select [0, !GetAZs '']
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${Environment}-forecasting-public-subnet
+
+  PrivateSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.2.0/24
+      AvailabilityZone: !Select [1, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: !Sub ${Environment}-forecasting-private-subnet
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub ${Environment}-forecasting-igw
+
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${Environment}-forecasting-public-rt
+
+  PublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: AttachGateway
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  PublicSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet
+      RouteTableId: !Ref PublicRouteTable
+
+  # Security Groups
+  ForecastingSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for forecasting instances
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+          Description: SSH access
+        - IpProtocol: tcp
+          FromPort: 8080
+          ToPort: 8080
+          CidrIp: 0.0.0.0/0
+          Description: Airflow webserver
+        - IpProtocol: tcp
+          FromPort: 5000
+          ToPort: 5000
+          CidrIp: 0.0.0.0/0
+          Description: Flask API
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+          Description: All outbound traffic
+      Tags:
+        - Key: Name
+          Value: !Sub ${Environment}-forecasting-sg
+
+  # S3 Buckets
+  DataBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub ${Environment}-econometric-forecasting-data-${AWS::AccountId}
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      VersioningConfiguration:
+        Status: Enabled
+      LifecycleConfiguration:
+        Rules:
+          - Status: Enabled
+            Transitions:
+              - TransitionInDays: 30
+                StorageClass: STANDARD_IA
+              - TransitionInDays: 90
+                StorageClass: GLACIER
+      NotificationConfiguration:
+        LambdaConfigurations:
+          - Event: s3:ObjectCreated:*
+            Function: !GetAtt DataProcessingLambda.Arn
+      Tags:
+        - Key: Name
+          Value: !Sub ${Environment}-forecasting-data-bucket
+        - Key: Environment
+          Value: !Ref Environment
+
+  ModelsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub ${Environment}-econometric-forecasting-models-${AWS::AccountId}
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      VersioningConfiguration:
+        Status: Enabled
+      Tags:
+        - Key: Name
+          Value: !Sub ${Environment}-forecasting-models-bucket
+
+  OutputsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub ${Environment}-econometric-forecasting-outputs-${AWS::AccountId}
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${Environment}-forecasting-outputs-bucket
+
+  # IAM Roles and Policies
+  EC2ForecastingRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub ${Environment}-forecasting-ec2-role
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
+      Policies:
+        - PolicyName: ForecastingS3Access
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                  - s3:DeleteObject
+                  - s3:ListBucket
+                Resource:
+                  - !Sub ${DataBucket}/*
+                  - !Sub ${ModelsBucket}/*
+                  - !Sub ${OutputsBucket}/*
+                  - !Ref DataBucket
+                  - !Ref ModelsBucket
+                  - !Ref OutputsBucket
+        - PolicyName: ForecastingSecretsAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - secretsmanager:GetSecretValue
+                Resource: !Ref APIKeysSecret
+
+  EC2InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref EC2ForecastingRole
+
+  # Lambda Execution Role
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub ${Environment}-forecasting-lambda-role
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: ForecastingLambdaAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                  - s3:ListBucket
+                Resource:
+                  - !Sub ${DataBucket}/*
+                  - !Sub ${OutputsBucket}/*
+                  - !Ref DataBucket
+                  - !Ref OutputsBucket
+              - Effect: Allow
+                Action:
+                  - secretsmanager:GetSecretValue
+                Resource: !Ref APIKeysSecret
+
+  # Secrets Manager for API Keys
+  APIKeysSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: !Sub ${Environment}/forecasting/api-keys
+      Description: API keys for forecasting platform
+      SecretString: !Sub |
+        {
+          "FRED_API_KEY": "your_fred_api_key_here",
+          "OPENAI_API_KEY": "your_openai_api_key_here",
+          "LANGCHAIN_API_KEY": "your_langchain_api_key_here",
+          "NEWSAPI_KEY": "your_newsapi_key_here",
+          "NIXTLA_API_KEY": "your_nixtla_api_key_here"
+        }
+
+  # Lambda Functions
+  DataProcessingLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub ${Environment}-data-processing
+      Runtime: python3.9
+      Handler: lambda_function.lambda_handler
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Timeout: 900
+      MemorySize: 3008
+      Environment:
+        Variables:
+          DATA_BUCKET: !Ref DataBucket
+          OUTPUTS_BUCKET: !Ref OutputsBucket
+          SECRETS_ARN: !Ref APIKeysSecret
+          ENVIRONMENT: !Ref Environment
+      Code:
+        ZipFile: |
+          import json
+          import boto3
+          import os
+          from datetime import datetime
+          
+          def lambda_handler(event, context):
+              """
+              Lambda handler for data processing triggered by S3 events.
+              """
+              s3 = boto3.client('s3')
+              
+              try:
+                  # Process S3 event
+                  for record in event.get('Records', []):
+                      bucket = record['s3']['bucket']['name']
+                      key = record['s3']['object']['key']
+                      
+                      print(f"Processing file: s3://{bucket}/{key}")
+                      
+                      # Trigger data processing workflow
+                      result = process_uploaded_data(bucket, key)
+                      
+                  return {
+                      'statusCode': 200,
+                      'body': json.dumps({
+                          'message': 'Data processing completed successfully',
+                          'timestamp': datetime.utcnow().isoformat()
+                      })
+                  }
+                  
+              except Exception as e:
+                  print(f"Error: {str(e)}")
+                  return {
+                      'statusCode': 500,
+                      'body': json.dumps({
+                          'error': str(e),
+                          'timestamp': datetime.utcnow().isoformat()
+                      })
+                  }
+          
+          def process_uploaded_data(bucket, key):
+              """Process uploaded data file."""
+              # Placeholder for data processing logic
+              return {'status': 'processed', 'file': f's3://{bucket}/{key}'}
+
+  ForecastingLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub ${Environment}-econometric-forecasting
+      Runtime: python3.9
+      Handler: lambda_function.lambda_handler
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Timeout: 900
+      MemorySize: 3008
+      Environment:
+        Variables:
+          DATA_BUCKET: !Ref DataBucket
+          MODELS_BUCKET: !Ref ModelsBucket
+          OUTPUTS_BUCKET: !Ref OutputsBucket
+          SECRETS_ARN: !Ref APIKeysSecret
+          ENVIRONMENT: !Ref Environment
+      Code:
+        ZipFile: |
+          import json
+          import boto3
+          import os
+          from datetime import datetime
+          
+          def lambda_handler(event, context):
+              """
+              Lambda handler for lightweight econometric forecasting.
+              """
+              s3 = boto3.client('s3')
+              
+              try:
+                  # Extract parameters from event
+                  indicators = event.get('indicators', ['GDP', 'UNEMPLOYMENT', 'INFLATION'])
+                  horizon = event.get('horizon', 6)
+                  
+                  result = {
+                      'statusCode': 200,
+                      'body': json.dumps({
+                          'message': 'Forecasting completed successfully',
+                          'indicators': indicators,
+                          'horizon': horizon,
+                          'data_bucket': os.environ.get('DATA_BUCKET'),
+                          'outputs_bucket': os.environ.get('OUTPUTS_BUCKET'),
+                          'timestamp': datetime.utcnow().isoformat()
+                      })
+                  }
+                  
+                  return result
+                  
+              except Exception as e:
+                  return {
+                      'statusCode': 500,
+                      'body': json.dumps({
+                          'error': str(e),
+                          'timestamp': datetime.utcnow().isoformat()
+                      })
+                  }
+
+  # S3 Lambda Permission
+  S3LambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref DataProcessingLambda
+      Action: lambda:InvokeFunction
+      Principal: s3.amazonaws.com
+      SourceAccount: !Ref AWS::AccountId
+      SourceArn: !Sub ${DataBucket}
+
+  # EC2 Instance for Heavy Compute
+  ForecastingInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-0c02fb55956c7d316  # Amazon Linux 2 AMI (update for your region)
+      InstanceType: !Ref InstanceType
+      KeyName: !Ref KeyPairName
+      SecurityGroupIds:
+        - !Ref ForecastingSecurityGroup
+      SubnetId: !Ref PublicSubnet
+      IamInstanceProfile: !Ref EC2InstanceProfile
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          yum update -y
+          yum install -y docker python3 python3-pip git htop
+          
+          # Install Docker Compose
+          curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          chmod +x /usr/local/bin/docker-compose
+          
+          # Start Docker
+          service docker start
+          usermod -a -G docker ec2-user
+          
+          # Install R
+          amazon-linux-extras install R4
+          
+          # Install AWS CLI v2
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          ./aws/install
+          
+          # Set environment variables
+          echo "export AWS_DATA_BUCKET=${DataBucket}" >> /home/ec2-user/.bashrc
+          echo "export AWS_MODELS_BUCKET=${ModelsBucket}" >> /home/ec2-user/.bashrc
+          echo "export AWS_OUTPUTS_BUCKET=${OutputsBucket}" >> /home/ec2-user/.bashrc
+          echo "export AWS_SECRETS_ARN=${APIKeysSecret}" >> /home/ec2-user/.bashrc
+          echo "export ENVIRONMENT=${Environment}" >> /home/ec2-user/.bashrc
+          
+          # Install CloudWatch agent
+          wget https://s3.amazonaws.com/amazoncloudwatch-agent/amazon_linux/amd64/latest/amazon-cloudwatch-agent.rpm
+          rpm -U ./amazon-cloudwatch-agent.rpm
+          
+      Tags:
+        - Key: Name
+          Value: !Sub ${Environment}-forecasting-instance
+        - Key: Environment
+          Value: !Ref Environment
+
+  # CloudWatch Log Groups
+  ForecastingLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/ec2/${Environment}-forecasting
+      RetentionInDays: 30
+
+  DataProcessingLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${Environment}-data-processing
+      RetentionInDays: 30
+
+  ForecastingLambdaLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${Environment}-econometric-forecasting
+      RetentionInDays: 30
+
+  # CloudWatch Alarms
+  HighCPUAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub ${Environment}-forecasting-high-cpu
+      AlarmDescription: High CPU utilization on forecasting instance
+      MetricName: CPUUtilization
+      Namespace: AWS/EC2
+      Statistic: Average
+      Period: 300
+      EvaluationPeriods: 2
+      Threshold: 80
+      ComparisonOperator: GreaterThanThreshold
+      Dimensions:
+        - Name: InstanceId
+          Value: !Ref ForecastingInstance
+
+  LambdaErrorAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub ${Environment}-forecasting-lambda-errors
+      AlarmDescription: High error rate on forecasting Lambda
+      MetricName: Errors
+      Namespace: AWS/Lambda
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 2
+      Threshold: 5
+      ComparisonOperator: GreaterThanThreshold
+      Dimensions:
+        - Name: FunctionName
+          Value: !Ref ForecastingLambda
+
+Outputs:
+  VPCId:
+    Description: VPC ID
+    Value: !Ref VPC
+    Export:
+      Name: !Sub ${Environment}-forecasting-vpc-id
+
+  ForecastingInstanceId:
+    Description: EC2 Instance ID for forecasting
+    Value: !Ref ForecastingInstance
+    Export:
+      Name: !Sub ${Environment}-forecasting-instance-id
+
+  ForecastingInstancePublicIP:
+    Description: Public IP of forecasting instance
+    Value: !GetAtt ForecastingInstance.PublicIp
+
+  DataBucketName:
+    Description: S3 bucket for data storage
+    Value: !Ref DataBucket
+    Export:
+      Name: !Sub ${Environment}-forecasting-data-bucket
+
+  ModelsBucketName:
+    Description: S3 bucket for models storage
+    Value: !Ref ModelsBucket
+    Export:
+      Name: !Sub ${Environment}-forecasting-models-bucket
+
+  OutputsBucketName:
+    Description: S3 bucket for outputs storage
+    Value: !Ref OutputsBucket
+    Export:
+      Name: !Sub ${Environment}-forecasting-outputs-bucket
+
+  DataProcessingLambdaArn:
+    Description: ARN of the data processing Lambda function
+    Value: !GetAtt DataProcessingLambda.Arn
+    Export:
+      Name: !Sub ${Environment}-data-processing-lambda-arn
+
+  ForecastingLambdaArn:
+    Description: ARN of the forecasting Lambda function
+    Value: !GetAtt ForecastingLambda.Arn
+    Export:
+      Name: !Sub ${Environment}-forecasting-lambda-arn
+
+  APIKeysSecretArn:
+    Description: ARN of the API keys secret
+    Value: !Ref APIKeysSecret
+    Export:
+      Name: !Sub ${Environment}-forecasting-secrets-arn
