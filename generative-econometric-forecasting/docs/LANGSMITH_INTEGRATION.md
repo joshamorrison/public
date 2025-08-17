@@ -7,7 +7,7 @@ The Generative Econometric Forecasting platform now includes comprehensive LangS
 ## ✅ Successfully Implemented
 
 ### 1. Environment Configuration
-- **LangChain API Key**: `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`
+- **LangChain API Key**: `your_langchain_api_key_here`
 - **Tracing Enabled**: `LANGCHAIN_TRACING_V2=true`
 - **Multiple Projects**: Separate tracking for different AI components
 
