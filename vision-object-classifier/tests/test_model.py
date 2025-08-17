@@ -7,7 +7,7 @@ import sys
 # Add src to path for imports
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
 
-from model import create_model, save_model, load_model, ModelEvaluator, FocalLoss
+from vision_classifier.model import create_model, save_model, load_model, ModelEvaluator, FocalLoss
 
 
 class TestModelCreation(unittest.TestCase):

@@ -10,8 +10,8 @@ import json
 # Add src to path for imports
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
 
-from predict import DishCleanlinessPredictor
-from model import create_model, save_model
+from vision_classifier.predict import DishCleanlinessPredictor
+from vision_classifier.model import create_model, save_model
 
 
 class TestDishCleanlinessPredictor(unittest.TestCase):

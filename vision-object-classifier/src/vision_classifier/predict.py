@@ -225,6 +225,26 @@ class DishCleanlinessPredictor:
         return result
 
 
+# Alias for backwards compatibility and CLI scripts
+DishClassifier = DishCleanlinessPredictor
+
+
+def predict_single_image(image_path, model_path, config_path=None):
+    """
+    Convenient function for single image prediction.
+    
+    Args:
+        image_path: Path to image file
+        model_path: Path to trained model
+        config_path: Path to config file (optional)
+    
+    Returns:
+        Dictionary with prediction results
+    """
+    predictor = DishCleanlinessPredictor(model_path, config_path)
+    return predictor.predict_single(image_path)
+
+
 def main():
     parser = argparse.ArgumentParser(description='Dish Cleanliness Prediction')
     parser.add_argument('--model', required=True, help='Path to trained model')

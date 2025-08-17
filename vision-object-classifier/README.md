@@ -20,10 +20,15 @@ Computer vision system for classifying household objects as clean or dirty using
 git clone https://github.com/joshamorrison/public.git
 cd public/vision-object-classifier
 
-# 2. Install dependencies (takes ~2 minutes)
+# 2. Create virtual environment (recommended)
+python -m venv venv
+source venv/Scripts/activate  # Windows
+# source venv/bin/activate    # macOS/Linux
+
+# 3. Install dependencies (takes ~2 minutes)
 pip install -r requirements.txt
 
-# 3. Run the demo (tests 3 scenarios in ~30 seconds)
+# 4. Run the demo (tests 3 scenarios in ~30 seconds)
 python quick_start.py
 ```
 
@@ -63,6 +68,33 @@ python src/predict.py --model models/final_balanced_model.pth --config models/ba
 python scripts/test_installation.py
 ```
 
+### 🛠️ Virtual Environment Setup (Recommended)
+
+**Create and activate virtual environment:**
+```bash
+# Create virtual environment
+python -m venv venv
+
+# Activate (Windows)
+venv\Scripts\activate
+
+# Activate (macOS/Linux)  
+source venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Verify installation
+python quick_start.py
+```
+
+**Benefits of Virtual Environment:**
+- ✅ Isolated dependencies (no conflicts)
+- ✅ Reproducible environment across systems
+- ✅ Professional development practice
+- ✅ Easy cleanup and management
+- ✅ Prevents system Python pollution
+
 ## 🔄 Custom Training with Your Own Data
 
 **Add your own images and retrain the model in 3 steps:**
@@ -100,8 +132,7 @@ python src/predict.py --model models/final_balanced_model.pth --config models/ba
 ```bash
 # Create unlimited realistic dirty dish variants from clean images
 python -c "
-import sys; sys.path.append('src')
-from synthetic_data import SyntheticDirtyDishGenerator
+from src.vision_classifier.synthetic_data import SyntheticDirtyDishGenerator
 generator = SyntheticDirtyDishGenerator('data/dirty')
 total = generator.batch_generate('data/clean', num_variations=5)
 print(f'Generated {total} new synthetic dirty images')
@@ -122,7 +153,7 @@ python scripts/download_data.py --download-kaggle
 python scripts/download_data.py --generate-synthetic
 
 # 4. Retrain with enhanced dataset
-python src/train.py
+python scripts/cli/train_model.py --data_dir data
 ```
 
 **🎯 Data strategy benefits:**
@@ -172,26 +203,32 @@ python src/train.py
 ## Project Structure
 ```
 vision-object-classifier/
-├── src/
-│   ├── model.py           # Neural network architectures (Custom CNN, ResNet50, etc.)
-│   ├── data_utils.py      # Data loading, preprocessing, and augmentation
-│   ├── synthetic_data.py  # Advanced synthetic dirty dish generation
-│   ├── train.py          # Training pipeline with class balancing
-│   └── predict.py        # Inference engine with batch processing
-├── scripts/
-│   ├── download_data.py     # Data setup and synthetic data generation utilities
-│   ├── test_installation.py # Installation validation for new users
-│   └── setup.py            # Package installation configuration
-├── data/
-│   ├── clean/            # Clean dish images (70 diverse samples)
-│   ├── dirty/            # Dirty dish images (140 synthetic variants)
-│   └── kaggle_downloads/ # External dataset integration
-├── models/               # Trained model checkpoints and configurations
-├── results/              # Prediction outputs and performance reports
-├── tests/                # Comprehensive unit test suite
-├── requirements.txt      # Production dependencies
-├── .env.example         # Environment configuration template
-└── README.md            # Comprehensive documentation
+├── src/                          # Python package (proper src layout)
+│   └── vision_classifier/        # Main package
+│       ├── __init__.py          # Package initialization
+│       ├── model.py             # Neural network architectures (Custom CNN, ResNet50, etc.)
+│       ├── data_utils.py        # Data loading, preprocessing, and augmentation
+│       ├── synthetic_data.py    # Advanced synthetic dirty dish generation
+│       ├── train.py             # Training pipeline with class balancing
+│       └── predict.py           # Inference engine with batch processing
+├── scripts/                     # CLI scripts and utilities
+│   ├── cli/                     # Command-line interface scripts
+│   │   ├── train_model.py       # Training CLI script
+│   │   └── predict_image.py     # Prediction CLI script
+│   ├── download_data.py         # Data setup and synthetic data generation utilities
+│   ├── test_installation.py     # Installation validation for new users
+│   └── setup.py                 # Legacy setup script
+├── data/                        # Data directory (project artifacts)
+│   ├── clean/                   # Clean dish images (70 diverse samples)
+│   ├── dirty/                   # Dirty dish images (140 synthetic variants)
+│   └── kaggle_downloads/        # External dataset integration
+├── models/                      # Trained model checkpoints and configurations
+├── tests/                       # Comprehensive unit test suite
+├── setup.py                     # Package installation configuration
+├── pyproject.toml              # Modern Python packaging configuration
+├── requirements.txt             # Production dependencies
+├── .env.example                # Environment configuration template
+└── README.md                   # Comprehensive documentation
 ```
 
 ## Development Journey & Problem Solving
@@ -557,6 +594,22 @@ Failed: 0
 Errors: 0
 Success Rate: 100.0%
 ============================================================
+```
+
+## 🔧 Troubleshooting
+
+**Common Issues and Solutions:**
+- **Import errors**: Make sure you're in the project directory and virtual environment is activated
+- **Missing dependencies**: Run `pip install -r requirements.txt` in activated virtual environment  
+- **Python version**: Requires Python 3.8+
+- **Virtual environment issues**: Deactivate (`deactivate`) and recreate (`python -m venv venv`)
+- **Model file not found**: Run training first (`python src/train.py`) or check models/ directory
+- **CUDA/GPU errors**: Add `--device cpu` to force CPU usage if GPU issues occur
+
+**Quick Health Check:**
+```bash
+python scripts/test_installation.py  # Validates entire setup
+python quick_start.py                # Tests core functionality
 ```
 
 ## Contact

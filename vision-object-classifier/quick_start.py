@@ -19,7 +19,7 @@ def run_demo():
         print("ERROR: Model file not found. Make sure you're in the project root directory.")
         return
     
-    if not os.path.exists('src/predict.py'):
+    if not os.path.exists('scripts/cli/predict_image.py'):
         print("ERROR: Prediction script not found. Make sure you're in the project root directory.")
         return
     
@@ -56,10 +56,11 @@ def run_demo():
             
         # Run prediction
         cmd = [
-            sys.executable, 'src/predict.py',
-            '--model', 'models/final_balanced_model.pth',
-            '--config', 'models/balanced_config.json', 
-            '--image', test['image']
+            sys.executable, 'scripts/cli/predict_image.py',
+            test['image'],
+            '--model_path', 'models/final_balanced_model.pth',
+            '--config_path', 'models/balanced_config.json',
+            '--show_confidence'
         ]
         
         try:
@@ -68,7 +69,7 @@ def run_demo():
             if result.returncode == 0:
                 # Parse output for class prediction
                 lines = result.stdout.strip().split('\n')
-                prediction_line = [line for line in lines if line.startswith('Class:')]
+                prediction_line = [line for line in lines if line.startswith('Prediction:')]
                 
                 if prediction_line:
                     predicted_class = prediction_line[0].split(':', 1)[1].strip()
@@ -108,11 +109,15 @@ def run_demo():
     print()
     print("=== NEXT STEPS ===")
     print("To test with your own images:")
-    print("python src/predict.py --model models/final_balanced_model.pth --config models/balanced_config.json --image YOUR_IMAGE.jpg")
+    print("python scripts/cli/predict_image.py YOUR_IMAGE.jpg --show_confidence")
     print()
     print("To train with your own data:")
     print("1. Add images to data/clean/ and data/dirty/")
-    print("2. python src/train.py")
+    print("2. python scripts/cli/train_model.py --data_dir data")
+    print()
+    print("Or install the package and use command line tools:")
+    print("pip install -e .")
+    print("vision-classifier-predict YOUR_IMAGE.jpg --show_confidence")
 
 if __name__ == "__main__":
     run_demo()

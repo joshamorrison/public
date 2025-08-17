@@ -11,9 +11,9 @@ import numpy as np
 import json
 from datetime import datetime
 
-from model import create_model, save_model, FocalLoss, ModelEvaluator
-from data_utils import create_data_loaders, prepare_dataset_structure
-from synthetic_data import SyntheticDirtyDishGenerator
+from .model import create_model, save_model, FocalLoss, ModelEvaluator
+from .data_utils import create_data_loaders, prepare_dataset_structure
+from .synthetic_data import SyntheticDirtyDishGenerator
 
 
 class DishClassifierTrainer:

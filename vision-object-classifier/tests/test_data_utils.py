@@ -10,7 +10,7 @@ from torch.utils.data import DataLoader
 # Add src to path for imports
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
 
-from data_utils import (
+from vision_classifier.data_utils import (
     DishDataset, 
     get_data_transforms, 
     create_data_loaders, 

@@ -8,7 +8,7 @@ import sys
 # Add src to path for imports
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
 
-from synthetic_data import SyntheticDirtyDishGenerator
+from vision_classifier.synthetic_data import SyntheticDirtyDishGenerator
 
 
 class TestSyntheticDataGenerator(unittest.TestCase):
