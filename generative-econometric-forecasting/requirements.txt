@@ -26,11 +26,61 @@ langchain-core>=0.1.0
 openai>=1.10.0
 
 # =====================================
+# FOUNDATION MODELS & TRANSFORMERS
+# =====================================
+nixtla>=0.5.0                 # TimeGPT foundation model (paid API)
+statsforecast>=1.7.0          # Nixtla statistical models (free)
+neuralforecast>=1.7.0         # Nixtla neural models (free)
+mlforecast>=0.12.0            # Nixtla ML models (free)
+chronos-forecasting>=1.0.0    # Chronos transformer models
+transformers>=4.36.0          # Hugging Face transformers
+torch>=2.1.0                  # PyTorch for deep learning
+pytorch-lightning>=2.1.0      # Training orchestration
+accelerate>=0.25.0            # Model acceleration
+
+# =====================================
+# DEEP LEARNING & SYNTHETIC DATA
+# =====================================
+torchvision>=0.16.0           # Computer vision components
+torchaudio>=2.1.0             # Audio processing
+pyro-ppl>=1.8.6               # Bayesian deep learning
+gpytorch>=1.11.0              # Gaussian processes
+
+# =====================================
+# UNSTRUCTURED DATA & NLP
+# =====================================
+nltk>=3.8.1                   # Natural language processing
+spacy>=3.7.0                  # Advanced NLP
+transformers[sentencepiece]   # Tokenization support
+datasets>=2.15.0              # Dataset handling
+beautifulsoup4>=4.12.0        # Web scraping
+requests>=2.31.0              # HTTP requests
+newspaper3k>=0.2.8            # News article extraction
+
+# =====================================
+# FINANCIAL DATA & NEWS APIS
+# =====================================
+yfinance>=0.2.25              # Yahoo Finance data
+alpha-vantage>=2.3.1          # Alpha Vantage API
+newsapi-python>=0.2.7         # News API integration
+feedparser>=6.0.10            # RSS feed parsing
+
+# =====================================
+# ADVANCED ANALYTICS & UNCERTAINTY
+# =====================================
+pymc>=5.10.0                  # Bayesian modeling
+arviz>=0.17.0                 # Bayesian analysis
+numpyro>=0.13.2               # JAX-based probabilistic programming
+jax>=0.4.20                   # JAX for high-performance computing
+jaxlib>=0.4.20                # JAX library support
+
+# =====================================
 # ENVIRONMENT & CONFIGURATION
 # =====================================
 python-dotenv>=1.0.0
 pydantic>=2.0.0
 pyyaml>=6.0
+hydra-core>=1.3.0             # Configuration management
 
 # =====================================
 # VISUALIZATION & REPORTING
