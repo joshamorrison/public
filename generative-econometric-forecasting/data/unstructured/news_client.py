@@ -13,6 +13,15 @@ import time
 import os
 from urllib.parse import urlencode
 
+# LangSmith tracing for monitoring news operations
+try:
+    if os.getenv('LANGCHAIN_API_KEY'):
+        os.environ['LANGCHAIN_TRACING_V2'] = 'true'
+        os.environ['LANGCHAIN_PROJECT'] = 'economic-news-client'
+        print("LangSmith tracing enabled for news client")
+except Exception:
+    pass
+
 try:
     from newsapi import NewsApiClient
     NEWSAPI_AVAILABLE = True

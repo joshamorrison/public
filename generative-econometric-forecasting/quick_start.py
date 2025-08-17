@@ -22,6 +22,16 @@ try:
 except ImportError:
     print("[WARN] python-dotenv not installed, using system environment only")
 
+# Initialize LangSmith tracing for the entire application
+try:
+    import os
+    if os.getenv('LANGCHAIN_API_KEY'):
+        os.environ['LANGCHAIN_TRACING_V2'] = 'true'
+        os.environ['LANGCHAIN_PROJECT'] = 'generative-econometric-forecasting'
+        print("[LANGSMITH] LangSmith tracing enabled for comprehensive monitoring")
+except Exception as e:
+    pass  # Silent fail if LangSmith not available
+
 def print_header():
     """Print demo header"""
     print("GENERATIVE ECONOMETRIC FORECASTING - QUICK START DEMO")
@@ -316,8 +326,16 @@ def test_advanced_models():
         import neuralforecast
         model_status['neuralforecast'] = True
         print("[OK] Nixtla NeuralForecast: AVAILABLE (30+ neural models)")
-    except ImportError:
-        print("[INSTALL] Nixtla NeuralForecast: Install with 'pip install neuralforecast'")
+    except (ImportError, AttributeError) as e:
+        # Try alternative neural forecasting
+        try:
+            from models.neural_forecasting import NeuralModelEnsemble
+            ensemble = NeuralModelEnsemble()
+            available_models = ensemble.get_available_models()
+            model_status['neural_alternative'] = True
+            print(f"[OK] Alternative Neural Models: AVAILABLE ({len(available_models)} models)")
+        except Exception:
+            print("[INSTALL] Neural Forecasting: Limited availability")
     
     # Test Nixtla MLForecast
     try:
@@ -385,6 +403,11 @@ def generate_real_ai_analysis(economic_data, forecast_results):
     try:
         import openai
         
+        # Setup LangSmith tracing for AI analysis
+        if os.getenv('LANGCHAIN_API_KEY'):
+            os.environ['LANGCHAIN_TRACING_V2'] = 'true'
+            os.environ['LANGCHAIN_PROJECT'] = 'economic-ai-analysis'
+        
         # Prepare economic context
         latest_data = {}
         forecasts_6m = {}
@@ -443,6 +466,11 @@ def generate_huggingface_ai_analysis(economic_data, forecast_results):
     """Generate AI analysis using HuggingFace local models"""
     try:
         from transformers import pipeline, logging
+        
+        # Setup LangSmith tracing for HuggingFace analysis
+        if os.getenv('LANGCHAIN_API_KEY'):
+            os.environ['LANGCHAIN_TRACING_V2'] = 'true'
+            os.environ['LANGCHAIN_PROJECT'] = 'huggingface-local-analysis'
         
         # Suppress transformers warnings for cleaner output
         logging.set_verbosity_error()
@@ -706,8 +734,143 @@ def main():
     # Test advanced models availability
     model_status = test_advanced_models()
     
+    # 3. News Sentiment Analysis
+    print("\n[NEWS] NEWS SENTIMENT ANALYSIS:")
+    print("-" * 30)
+    try:
+        from data.unstructured.news_client import NewsClient
+        from data.unstructured.sentiment_analyzer import EconomicSentimentAnalyzer
+        
+        # Initialize news and sentiment clients
+        news_client = NewsClient(newsapi_key=os.getenv('NEWSAPI_KEY'))
+        sentiment_analyzer = EconomicSentimentAnalyzer(use_finbert=True, use_openai=False)
+        
+        # Fetch recent economic news from RSS feeds (always available)
+        print("   [RSS] Fetching recent economic news...")
+        news_articles = news_client.fetch_rss_feeds(max_articles_per_feed=3)
+        
+        if news_articles:
+            print(f"   [FETCH] Found {len(news_articles)} recent articles")
+            
+            # Filter for economic relevance (lower threshold for better results)
+            economic_articles = news_client.filter_economic_articles(news_articles, min_relevance_score=0.05)
+            print(f"   [FILTER] {len(economic_articles)} articles are economically relevant")
+            
+            if economic_articles[:3]:  # Analyze top 3 articles
+                print("   [AI] Analyzing sentiment of top economic news...")
+                sentiment_df = sentiment_analyzer.analyze_articles_sentiment(economic_articles[:3])
+                
+                if len(sentiment_df) > 0:
+                    metrics = sentiment_analyzer.calculate_sentiment_metrics(sentiment_df)
+                    
+                    overall_score = metrics.get('overall_sentiment_score', 0)
+                    print(f"   [SCORE] Overall Economic News Sentiment: {overall_score:.2f} (-1=negative, +1=positive)")
+                    
+                    sentiment_dist = metrics.get('sentiment_percentages', {})
+                    print(f"   [DIST] Sentiment Distribution: {dict(sentiment_dist)}")
+                    
+                    # Show sample headlines with sentiment
+                    print("   [SAMPLE] Recent Economic News Analysis:")
+                    for _, article in sentiment_df.head(2).iterrows():
+                        title_short = article['title'][:50] + "..." if len(article['title']) > 50 else article['title']
+                        print(f"     • {title_short}")
+                        print(f"       {article['sentiment'].upper()} (confidence: {article['confidence']:.2f})")
+                        
+                    # News-enhanced forecast adjustment
+                    print(f"   [INSIGHT] News sentiment impact on forecasts:")
+                    if overall_score > 0.1:
+                        print(f"     • Positive news sentiment suggests upward forecast bias")
+                        print(f"     • Market confidence appears strong")
+                    elif overall_score < -0.1:
+                        print(f"     • Negative news sentiment suggests downward forecast risk")
+                        print(f"     • Market concerns detected")
+                    else:
+                        print(f"     • Neutral news sentiment supports baseline forecasts")
+                        print(f"     • Markets appear balanced")
+                    
+                    # Apply sentiment adjustments to forecasts
+                    print(f"   [ENHANCE] Applying sentiment-adjusted forecasting...")
+                    try:
+                        from models.sentiment_adjusted_forecasting import SentimentAdjustedForecaster
+                        
+                        # Create sentiment-adjusted forecaster
+                        sentiment_forecaster = SentimentAdjustedForecaster(
+                            sentiment_weight=0.1,
+                            newsapi_key=os.getenv('NEWSAPI_KEY')
+                        )
+                        
+                        # Prepare forecast data for adjustment
+                        sample_forecasts = {}
+                        for indicator in forecast_results.keys():
+                            if indicator in forecast_results:
+                                forecast_data = forecast_results[indicator]['forecast']
+                                if hasattr(forecast_data, 'values'):
+                                    sample_forecasts[indicator] = forecast_data.values
+                                else:
+                                    sample_forecasts[indicator] = forecast_data
+                        
+                        if sample_forecasts:
+                            # Apply sentiment adjustments
+                            sentiment_data = {'overall_sentiment': overall_score, 'sentiment_strength': abs(overall_score), 'articles_analyzed': len(sentiment_df)}
+                            adjustment_results = sentiment_forecaster.batch_adjust_forecasts(sample_forecasts, sentiment_data)
+                            
+                            print(f"     • Applied sentiment adjustments to {len(sample_forecasts)} indicators")
+                            
+                            # Show adjustment impact
+                            for indicator, result in adjustment_results['adjusted_forecasts'].items():
+                                max_adj = max(abs(x) for x in result['sentiment_adjustments'])
+                                direction = "↑" if result['adjustment_summary']['avg_adjustment'] > 0 else "↓"
+                                print(f"     • {indicator.upper()}: {direction} {max_adj*100:.1f}% max adjustment")
+                        
+                    except Exception as e:
+                        print(f"     • Sentiment adjustment unavailable: {e}")
+                        
+                else:
+                    print("   [ERROR] No sentiment analysis results available")
+            else:
+                print("   [WARN] No economically relevant articles found for sentiment analysis")
+        else:
+            print("   [WARN] No recent news articles available")
+            
+    except Exception as e:
+        print(f"   [ERROR] News sentiment analysis unavailable: {e}")
+
     # Demonstrate AI insights (enhanced if OpenAI available)
-    demonstrate_ai_insights(economic_data, forecast_results, api_status.get('openai', False))
+    ai_analysis_result = demonstrate_ai_insights(economic_data, forecast_results, api_status.get('openai', False))
+    
+    # Generate Executive Reports
+    print("\n[REPORTS] GENERATING EXECUTIVE REPORTS:")
+    print("-" * 40)
+    try:
+        from src.reports.simple_reporting import SimpleEconomicReporter
+        
+        # Collect sentiment data if available
+        final_sentiment_data = None
+        if 'economic_articles' in locals() and len(economic_articles) > 0:
+            final_sentiment_data = {
+                'overall_sentiment': overall_score if 'overall_score' in locals() else 0,
+                'articles_analyzed': len(economic_articles) if 'economic_articles' in locals() else 0,
+                'data_source': 'real_news'
+            }
+        
+        # Create reporter and generate reports
+        reporter = SimpleEconomicReporter()
+        generated_files = reporter.generate_reports(
+            economic_data=economic_data,
+            forecast_results=forecast_results,
+            sentiment_analysis=final_sentiment_data,
+            ai_analysis=ai_analysis_result
+        )
+        
+        print("   [SUCCESS] Professional reports generated:")
+        for format_type, file_path in generated_files.items():
+            file_size = os.path.getsize(file_path) / 1024  # KB
+            print(f"     • {format_type.upper()}: {file_path.split('/')[-1]} ({file_size:.1f} KB)")
+        
+        print(f"   [LOCATION] Reports saved to: {reporter.output_dir}")
+        
+    except Exception as e:
+        print(f"   [ERROR] Report generation failed: {e}")
     
     # Show system summary
     show_tier_summary(model_status)

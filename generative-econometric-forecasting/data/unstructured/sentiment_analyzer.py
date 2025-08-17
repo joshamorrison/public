@@ -29,6 +29,16 @@ from langchain_openai import ChatOpenAI
 from langchain.prompts import PromptTemplate
 from langchain.schema import HumanMessage
 
+# LangSmith tracing for monitoring
+try:
+    import os
+    if os.getenv('LANGCHAIN_API_KEY'):
+        os.environ['LANGCHAIN_TRACING_V2'] = 'true'
+        os.environ['LANGCHAIN_PROJECT'] = 'economic-sentiment-analysis'
+        print("LangSmith tracing enabled for sentiment analysis")
+except Exception as e:
+    print(f"LangSmith setup warning: {e}")
+
 logger = logging.getLogger(__name__)
 
 
