@@ -1,0 +1,176 @@
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv/
+.env/
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Environment Variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE Files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# MMM Output Directories
+outputs/
+production/logs/
+cache/
+
+# Production directory - selective tracking
+production/logs/
+production/artifacts/
+production/*.joblib
+
+# Keep important production files
+!production/
+!production/*.json
+!production/*.py
+
+# Logs
+*.log
+logs/
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+*.ipynb
+
+# MMM Model Files (exclude large models but keep production ones)
+*.pkl
+*.joblib
+*.h5
+*.pt
+*.pth
+
+# Keep essential production models
+!production/*.joblib
+!models/mmm/*.py
+!models/r_integration/*.py
+
+# Data Files (exclude large datasets but keep synthetic data generation)
+# Uncomment these if you want to ignore specific data files:
+# data/real_marketing_data/
+# *.csv
+# *.xlsx
+# *.parquet
+
+# Temporary Files
+*.tmp
+*.temp
+.cache/
+.pytest_cache/
+
+# Coverage Reports
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+.hypothesis/
+
+# MLflow
+mlruns/
+mlartifacts/
+
+# Documentation builds
+docs/_build/
+
+# Unit test / coverage reports
+.tox/
+.nox/
+cover/
+
+# Airflow
+infrastructure/airflow/logs/
+infrastructure/airflow/airflow.db
+infrastructure/airflow/webserver_config.py
+
+# dbt
+infrastructure/dbt/target/
+infrastructure/dbt/dbt_packages/
+infrastructure/dbt/logs/
+infrastructure/dbt/profiles.yml
+# Keep profiles.yml.example if you create one
+
+# AWS
+.aws/
+*.pem
+
+# R
+.Rhistory
+.RData
+.Ruserdata
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+# Docker
+.dockerignore
+docker-compose.override.yml
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# Secrets and credentials
+secrets/
+*.key
+*.crt
+*.p12
+kaggle.json

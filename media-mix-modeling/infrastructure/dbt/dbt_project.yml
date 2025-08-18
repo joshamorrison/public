@@ -1,0 +1,50 @@
+# MMM Analytics dbt Project Configuration
+
+name: 'mmm_analytics'
+version: '1.0.0'
+config-version: 2
+
+# This setting configures which "profile" dbt uses for this project.
+profile: 'mmm_analytics'
+
+# These configurations specify where dbt should look for different types of files.
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+clean-targets:         # directories to be removed by `dbt clean`
+  - "target"
+  - "dbt_packages"
+
+# Configuring models
+models:
+  mmm_analytics:
+    # Config indicated by + and applies to all files under models/staging/
+    staging:
+      +materialized: view
+      +docs:
+        node_color: "lightblue"
+    
+    # Config indicated by + and applies to all files under models/intermediate/
+    intermediate:
+      +materialized: view
+      +docs:
+        node_color: "orange"
+    
+    # Config indicated by + and applies to all files under models/marts/
+    marts:
+      +materialized: table
+      +docs:
+        node_color: "green"
+
+# Documentation
+docs-paths: ["docs"]
+
+# Seeds configuration
+seeds:
+  mmm_analytics:
+    +column_types:
+      date: date

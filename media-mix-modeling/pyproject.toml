@@ -1,0 +1,174 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "media-mix-modeling"
+version = "1.0.0"
+description = "Advanced Media Mix Modeling & Optimization Platform with dbt Integration"
+readme = "README.md"
+license = {file = "LICENSE"}
+authors = [
+    {name = "Joshua Morrison", email = "joshamorrison@gmail.com"}
+]
+keywords = ["media mix modeling", "marketing attribution", "budget optimization", "dbt", "econometrics"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Marketing Professionals",
+    "Intended Audience :: Data Scientists", 
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Office/Business :: Financial :: Investment",
+]
+requires-python = ">=3.8"
+dependencies = [
+    "pandas>=1.5.0",
+    "numpy>=1.21.0",
+    "scikit-learn>=1.1.0",
+    "matplotlib>=3.5.0",
+    "seaborn>=0.11.0",
+    "scipy>=1.9.0",
+    "statsmodels>=0.13.0",
+    "python-dotenv>=0.19.0",
+    "openpyxl>=3.0.0",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+full = [
+    # Advanced MMM & Analytics
+    "mlflow>=2.0.0",
+    "optuna>=3.0.0",
+    "shap>=0.41.0",
+    
+    # Data Sources  
+    "kaggle>=1.5.0",
+    "datasets>=2.0.0",
+    "requests>=2.28.0",
+    
+    # dbt Integration
+    "dbt-core>=1.4.0",
+    "dbt-sqlite>=1.4.0",
+    "dbt-bigquery>=1.4.0",
+    "dbt-snowflake>=1.4.0",
+    
+    # R Integration
+    "rpy2>=3.5.0",
+    
+    # Cloud & Orchestration
+    "boto3>=1.26.0",
+    "apache-airflow>=2.5.0",
+    "sagemaker>=2.0.0",
+    
+    # API Integrations
+    "google-ads>=19.0.0",
+    "facebook-business>=16.0.0",
+    "google-analytics-data>=0.16.0",
+]
+
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "black>=22.0.0",
+    "flake8>=5.0.0",
+    "mypy>=0.991",
+    "pre-commit>=2.20.0",
+    "jupyter>=1.0.0",
+    "notebook>=6.4.0",
+]
+
+docs = [
+    "sphinx>=5.0.0",
+    "sphinx-rtd-theme>=1.0.0",
+    "myst-parser>=0.18.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/joshamorrison/public/tree/main/media-mix-modeling"
+Repository = "https://github.com/joshamorrison/public"
+Documentation = "https://github.com/joshamorrison/public/tree/main/media-mix-modeling/docs"
+"Bug Tracker" = "https://github.com/joshamorrison/public/issues"
+
+[project.scripts]
+mmm-quick-start = "quick_start:main"
+mmm-train = "src.training.train_model:main"
+mmm-optimize = "src.optimization.budget_optimizer:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*", "models*", "data*", "scripts*"]
+
+[tool.black]
+line-length = 88
+target-version = ['py38', 'py39', 'py310', 'py311']
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+addopts = "--cov=src --cov-report=html --cov-report=term-missing"
+filterwarnings = [
+    "ignore::UserWarning",
+    "ignore::DeprecationWarning",
+    "ignore::PendingDeprecationWarning",
+]
+
+[tool.coverage.run]
+source = ["src", "models", "data"]
+omit = [
+    "*/tests/*",
+    "*/test_*",
+    "setup.py",
+    "venv/*",
+    ".venv/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]

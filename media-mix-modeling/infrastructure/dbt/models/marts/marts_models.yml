@@ -1,0 +1,165 @@
+version: 2
+
+models:
+  - name: media_performance
+    description: Final media performance metrics with comprehensive attribution analysis
+    columns:
+      - name: channel
+        description: Media channel name
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['tv', 'digital', 'radio', 'print', 'social']
+      - name: total_spend
+        description: Total channel spend for the period
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: total_conversions
+        description: Total attributed conversions
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: total_revenue
+        description: Total attributed revenue
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: avg_roi
+        description: Average return on investment
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 10
+      - name: avg_cac
+        description: Average customer acquisition cost
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 1000
+      - name: channel_spend_share
+        description: Channel spend as share of total portfolio
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 1
+      - name: performance_category
+        description: Performance classification
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Top Performer', 'Strong Performer', 'Above Average', 'Average', 'Below Average']
+      - name: budget_recommendation
+        description: Budget allocation recommendation
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Increase Budget', 'Scale Gradually', 'Maintain Budget', 'Reduce Budget', 'Monitor Closely']
+      - name: attribution_confidence
+        description: Confidence level in attribution results
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['High Confidence', 'Medium Confidence', 'Low Confidence']
+
+  - name: budget_optimization
+    description: Budget optimization recommendations based on marginal ROI analysis
+    columns:
+      - name: channel
+        description: Media channel name
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['tv', 'digital', 'radio', 'print', 'social']
+      - name: current_monthly_spend
+        description: Current monthly spend
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: marginal_roi
+        description: Estimated marginal return on investment
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 10
+      - name: spend_elasticity
+        description: Spend elasticity coefficient
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 1
+      - name: recommended_scenario
+        description: Recommended optimization scenario
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Growth Focused', 'Diversified', 'ROI Optimized', 'Maintain Current']
+      - name: recommendation_confidence
+        description: Confidence in the recommendation
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['High', 'Medium', 'Low']
+      - name: roi_budget_change_pct
+        description: Percentage change in budget for ROI optimization
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: -50
+              max_value: 50
+      - name: change_magnitude
+        description: Magnitude of recommended change
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Minor Adjustment', 'Moderate Adjustment', 'Major Reallocation']
+      - name: expected_impact
+        description: Expected impact of the recommendation
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['High Impact', 'Medium Impact', 'Low Impact']
+
+# Custom data quality tests
+tests:
+  - name: portfolio_spend_balance
+    description: "Ensure total portfolio spend across channels equals 100%"
+    columns:
+      - media_performance
+    sql: |
+      SELECT 
+        spend_year,
+        spend_month,
+        SUM(channel_spend_share) as total_share
+      FROM {{ ref('media_performance') }}
+      GROUP BY spend_year, spend_month
+      HAVING ABS(SUM(channel_spend_share) - 1.0) > 0.01
+
+  - name: roi_reasonableness_check
+    description: "Flag channels with extremely high or low ROI for review"
+    columns:
+      - media_performance
+    sql: |
+      SELECT channel, avg_roi
+      FROM {{ ref('media_performance') }}
+      WHERE avg_roi > 5.0 OR avg_roi < 0.1
+
+  - name: budget_optimization_total_check
+    description: "Ensure optimized budgets sum to original total"
+    columns:
+      - budget_optimization
+    sql: |
+      SELECT 
+        'ROI Scenario' as scenario,
+        SUM(current_monthly_spend) as original_total,
+        SUM(roi_optimized_budget) as optimized_total,
+        ABS(SUM(current_monthly_spend) - SUM(roi_optimized_budget)) as difference
+      FROM {{ ref('budget_optimization') }}
+      HAVING ABS(SUM(current_monthly_spend) - SUM(roi_optimized_budget)) > 1000
