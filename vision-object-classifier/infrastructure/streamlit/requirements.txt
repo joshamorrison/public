@@ -1,0 +1,11 @@
+# Streamlit deployment requirements
+streamlit>=1.28.0
+requests>=2.25.0
+pillow>=10.0.0
+pandas>=1.5.0
+
+# Core vision classifier dependencies
+torch>=2.0.0
+torchvision>=0.15.0
+opencv-python>=4.8.0
+numpy>=1.24.0

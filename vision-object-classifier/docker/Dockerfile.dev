@@ -1,0 +1,49 @@
+# Development Dockerfile for Vision Object Classifier
+FROM python:3.11-slim
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies including dev tools
+RUN apt-get update && apt-get install -y \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
+    libgomp1 \
+    libgthread-2.0-0 \
+    curl \
+    git \
+    vim \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements and install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Install additional dev dependencies
+RUN pip install --no-cache-dir \
+    jupyter \
+    ipython \
+    pytest \
+    pytest-cov \
+    black \
+    flake8 \
+    mypy
+
+# Copy entire project for development
+COPY . .
+
+# Create directories for outputs
+RUN mkdir -p outputs logs
+
+# Expose ports for API and Jupyter
+EXPOSE 8000 8888
+
+# Set environment for development
+ENV PYTHONPATH=/app
+ENV FLASK_ENV=development
+
+# Default command - run development server with hot reload
+CMD ["python", "-m", "api.main", "--reload", "--host", "0.0.0.0"]

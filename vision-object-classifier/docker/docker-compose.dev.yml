@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  vision-classifier-dev:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.dev
+    container_name: vision-classifier-dev
+    ports:
+      - "8000:8000"
+      - "8888:8888"  # Jupyter notebook
+    environment:
+      - PYTHONPATH=/app
+      - LOG_LEVEL=DEBUG
+      - FLASK_ENV=development
+    volumes:
+      - ..:/app
+      - /app/venv  # Exclude venv from volume mount
+      - /app/__pycache__  # Exclude cache
+      - /app/.pytest_cache  # Exclude pytest cache
+    stdin_open: true
+    tty: true
+    command: /bin/bash
+    networks:
+      - vision-dev-network
+
+  # Development database (if needed)
+  # postgres-dev:
+  #   image: postgres:15-alpine
+  #   container_name: vision-postgres-dev
+  #   environment:
+  #     POSTGRES_DB: vision_dev
+  #     POSTGRES_USER: dev_user
+  #     POSTGRES_PASSWORD: dev_password
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - postgres_dev_data:/var/lib/postgresql/data
+  #   networks:
+  #     - vision-dev-network
+
+networks:
+  vision-dev-network:
+    driver: bridge
+
+# volumes:
+#   postgres_dev_data:

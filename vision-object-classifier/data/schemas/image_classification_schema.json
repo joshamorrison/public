@@ -1,0 +1,130 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Vision Object Classifier Schema",
+  "description": "Schema for image classification input and output formats",
+  "definitions": {
+    "ClassificationInput": {
+      "type": "object",
+      "properties": {
+        "image": {
+          "type": "string",
+          "description": "Base64 encoded image or file path"
+        },
+        "model_type": {
+          "type": "string",
+          "enum": ["fast", "balanced", "accurate"],
+          "default": "balanced",
+          "description": "Model variant to use"
+        },
+        "return_confidence": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether to return confidence scores"
+        },
+        "min_confidence": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "default": 0.0,
+          "description": "Minimum confidence threshold"
+        }
+      },
+      "required": ["image"]
+    },
+    "ClassificationOutput": {
+      "type": "object",
+      "properties": {
+        "predicted_class": {
+          "type": "string",
+          "enum": ["clean", "dirty"],
+          "description": "Predicted class"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "Confidence score"
+        },
+        "probabilities": {
+          "type": "object",
+          "properties": {
+            "clean": {
+              "type": "number",
+              "minimum": 0.0,
+              "maximum": 1.0
+            },
+            "dirty": {
+              "type": "number",
+              "minimum": 0.0,
+              "maximum": 1.0
+            }
+          },
+          "description": "Class probabilities"
+        },
+        "processing_time_ms": {
+          "type": "number",
+          "description": "Processing time in milliseconds"
+        }
+      },
+      "required": ["predicted_class"]
+    },
+    "SupportedFormats": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["jpg", "jpeg", "png"]
+      },
+      "description": "Supported image formats"
+    }
+  },
+  "api_endpoints": {
+    "classification": {
+      "single": {
+        "method": "POST",
+        "path": "/api/v1/classify/single",
+        "input": {"$ref": "#/definitions/ClassificationInput"},
+        "output": {"$ref": "#/definitions/ClassificationOutput"}
+      },
+      "batch": {
+        "method": "POST", 
+        "path": "/api/v1/batch/classify",
+        "input": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/ClassificationInput"}
+        },
+        "output": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/ClassificationOutput"}
+        }
+      }
+    },
+    "health": {
+      "status": {
+        "method": "GET",
+        "path": "/health/status"
+      },
+      "models": {
+        "method": "GET",
+        "path": "/health/models"
+      }
+    }
+  },
+  "data_structure": {
+    "raw": {
+      "description": "Original, unprocessed images",
+      "structure": "images_unlabeled/, annotations_raw/"
+    },
+    "processed": {
+      "description": "Labeled and processed training data",
+      "structure": "clean_labeled/, dirty_labeled/"
+    },
+    "samples": {
+      "description": "Sample images for demos and testing",
+      "structure": "demo_images/"
+    },
+    "synthetic": {
+      "description": "Generated synthetic data and tools",
+      "structure": "data_generator.py, generation_configs/"
+    }
+  }
+}

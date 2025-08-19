@@ -1,0 +1,37 @@
+[global]
+# Streamlit configuration for production deployment
+
+# Server settings
+developmentMode = false
+showErrorDetails = false
+showWarningOnDirectExecution = false
+
+[server]
+# Production server configuration
+headless = true
+enableCORS = true
+enableXsrfProtection = true
+maxUploadSize = 200
+maxMessageSize = 200
+
+# Performance settings
+runOnSave = false
+allowRunOnSave = false
+
+[browser]
+# Browser settings
+serverAddress = "0.0.0.0"
+gatherUsageStats = false
+
+[theme]
+# Custom theme for Vision Classifier
+primaryColor = "#1f77b4"
+backgroundColor = "#ffffff"
+secondaryBackgroundColor = "#f0f2f6"
+textColor = "#262730"
+font = "sans serif"
+
+[client]
+# Client settings
+showErrorDetails = false
+toolbarMode = "minimal"

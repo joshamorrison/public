@@ -35,13 +35,24 @@ class DishCleanlinessPredictor:
                 self.config = json.load(f)
         
         # Default model parameters
-        model_name = self.config.get('model_name', 'resnet50')
+        model_name = self.config.get('model_name', 'custom_cnn')  # Changed default to custom_cnn
         num_classes = self.config.get('num_classes', 2)
         
-        # Load model
+        # Load model with architecture detection
         print(f"Loading model from {model_path}")
-        self.model = load_model(model_path, model_name, num_classes, self.device)
-        print(f"Model loaded successfully on {self.device}")
+        
+        # Try to load with configured architecture first, then fallback to common architectures
+        architectures_to_try = [model_name, 'custom_cnn', 'resnet50', 'efficientnet_b0']
+        
+        for arch in architectures_to_try:
+            try:
+                self.model = load_model(model_path, arch, num_classes, self.device)
+                print(f"Model loaded successfully with {arch} architecture on {self.device}")
+                break
+            except Exception as e:
+                if arch == architectures_to_try[-1]:  # Last attempt
+                    raise e
+                continue
         
         # Setup data transforms
         _, self.transform = get_data_transforms(augment=False)

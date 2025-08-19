@@ -25,12 +25,11 @@ wheels/
 *.egg
 MANIFEST
 
-# Virtual environments
+# Virtual Environments  
+.venv/
 venv/
 env/
 ENV/
-env.bak/
-venv.bak/
 
 # PyTorch models and checkpoints (exclude training artifacts but keep production models)
 *.ckpt
@@ -70,18 +69,18 @@ ipython_config.py
 *.tar.gz
 
 # Exclude most training images but keep a few samples for out-of-box demo
-data/clean/0*.jpg
-data/clean/generated_*.jpg
-data/dirty/0*.jpg
-data/dirty/*_dirty_*.jpg
-data/dirty/generated_*_dirty_*.jpg
+data/processed/clean_labeled/0*.jpg
+data/processed/clean_labeled/generated_*.jpg
+data/processed/dirty_labeled/0*.jpg
+data/processed/dirty_labeled/*_dirty_*.jpg
+data/processed/dirty_labeled/generated_*_dirty_*.jpg
 
 # Keep these demo images for immediate testing:
-!data/clean/plate_01.jpg
-!data/clean/bowl_06.jpg  
-!data/dirty/plate_01_dirty_medium_02.jpg
-!data/dirty/bowl_06_dirty_heavy_03.jpg
-!data/dirty/real_dirty_pasta_plate.jpg
+!data/processed/clean_labeled/plate_01.jpg
+!data/processed/clean_labeled/bowl_06.jpg  
+!data/processed/dirty_labeled/plate_01_dirty_medium_02.jpg
+!data/processed/dirty_labeled/bowl_06_dirty_heavy_03.jpg
+!data/processed/dirty_labeled/real_dirty_pasta_plate.jpg
 
 # IDE
 .vscode/
@@ -119,3 +118,18 @@ mlartifacts/
 .mypy_cache/
 .dmypy.json
 dmypy.json
+
+# Additional cloud credentials and sensitive files
+credentials.json
+*.pem
+config.json
+
+# Database files
+*.db
+*.sqlite
+
+# Model files (additional formats)
+*.pkl
+*.joblib
+*.h5
+models/trained/
