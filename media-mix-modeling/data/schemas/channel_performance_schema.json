@@ -1,0 +1,84 @@
+{
+  "title": "Channel Performance Data Schema",
+  "description": "Schema for daily channel performance metrics across marketing channels",
+  "type": "object",
+  "properties": {
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Performance date in YYYY-MM-DD format",
+      "example": "2024-08-20"
+    },
+    "channel": {
+      "type": "string",
+      "description": "Marketing channel name",
+      "enum": ["Search", "Social", "Display", "Video", "Email", "Direct"],
+      "example": "Search"
+    },
+    "impressions": {
+      "type": "integer",
+      "description": "Number of ad impressions",
+      "minimum": 0,
+      "maximum": 100000,
+      "example": 45000
+    },
+    "clicks": {
+      "type": "integer",
+      "description": "Number of clicks on ads",
+      "minimum": 0,
+      "maximum": 5000,
+      "example": 2250
+    },
+    "conversions": {
+      "type": "integer",
+      "description": "Number of conversions",
+      "minimum": 0,
+      "maximum": 250,
+      "example": 112
+    },
+    "spend": {
+      "type": "number",
+      "description": "Amount spent on advertising",
+      "minimum": 0,
+      "maximum": 10000,
+      "example": 5500.00
+    },
+    "revenue": {
+      "type": "number",
+      "description": "Revenue generated",
+      "minimum": 0,
+      "maximum": 25000,
+      "example": 13750.00
+    },
+    "cpc": {
+      "type": "number",
+      "description": "Cost per click",
+      "minimum": 0,
+      "maximum": 5,
+      "example": 2.44
+    },
+    "ctr": {
+      "type": "number",
+      "description": "Click-through rate (decimal)",
+      "minimum": 0,
+      "maximum": 1,
+      "example": 0.05
+    },
+    "conversion_rate": {
+      "type": "number",
+      "description": "Conversion rate (decimal)",
+      "minimum": 0,
+      "maximum": 1,
+      "example": 0.05
+    }
+  },
+  "required": ["date", "channel", "impressions", "clicks", "conversions", "spend", "revenue"],
+  "source": {
+    "name": "Generated",
+    "quality": "SYNTHETIC",
+    "description": "Generated realistic channel performance data",
+    "size": 180,
+    "period": "30 days across 6 channels",
+    "last_updated": "2024-08-20"
+  }
+}

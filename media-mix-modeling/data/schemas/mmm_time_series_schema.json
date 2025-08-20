@@ -1,0 +1,79 @@
+{
+  "title": "Media Mix Modeling Time Series Schema",
+  "description": "Schema for weekly time series data used in media mix modeling",
+  "type": "object",
+  "properties": {
+    "week": {
+      "type": "string",
+      "format": "date",
+      "description": "Week starting date in YYYY-MM-DD format",
+      "example": "2023-01-01"
+    },
+    "tv_spend": {
+      "type": "number",
+      "description": "Weekly TV advertising spend",
+      "minimum": 0,
+      "example": 48750.25
+    },
+    "digital_spend": {
+      "type": "number", 
+      "description": "Weekly digital advertising spend",
+      "minimum": 0,
+      "example": 32500.75
+    },
+    "radio_spend": {
+      "type": "number",
+      "description": "Weekly radio advertising spend", 
+      "minimum": 0,
+      "example": 19500.50
+    },
+    "print_spend": {
+      "type": "number",
+      "description": "Weekly print advertising spend",
+      "minimum": 0,
+      "example": 10800.00
+    },
+    "social_spend": {
+      "type": "number",
+      "description": "Weekly social media advertising spend",
+      "minimum": 0,
+      "example": 16250.25
+    },
+    "revenue": {
+      "type": "number",
+      "description": "Weekly revenue",
+      "minimum": 0,
+      "example": 135000.00
+    },
+    "conversions": {
+      "type": "integer",
+      "description": "Weekly number of conversions",
+      "minimum": 0,
+      "example": 3250
+    },
+    "brand_awareness": {
+      "type": "number",
+      "description": "Brand awareness score (0-1 scale)",
+      "minimum": 0,
+      "maximum": 1,
+      "example": 0.285
+    },
+    "market_share": {
+      "type": "number",
+      "description": "Market share percentage (0-1 scale)",
+      "minimum": 0,
+      "maximum": 1,
+      "example": 0.165
+    }
+  },
+  "required": ["week", "tv_spend", "digital_spend", "radio_spend", "print_spend", "social_spend", "revenue", "conversions"],
+  "source": {
+    "name": "Generated",
+    "quality": "SYNTHETIC",
+    "description": "Generated weekly MMM data with seasonal effects and realistic spend patterns",
+    "size": 52,
+    "period": "52 weeks (1 year)",
+    "seasonal_effects": true,
+    "last_updated": "2024-08-20"
+  }
+}

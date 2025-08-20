@@ -194,3 +194,180 @@ class MediaDataClient:
         }
         
         return marketing_data, source_info
+    
+    def load_kaggle_marketing_data(self) -> Tuple[pd.DataFrame, Dict[str, Any]]:
+        """
+        Load real marketing data from Kaggle datasets
+        
+        Returns:
+            Tuple of (dataframe, source_info)
+        """
+        try:
+            import kaggle
+            
+            # Try to download popular marketing datasets from Kaggle
+            datasets_to_try = [
+                ('carrie1/ecommerce-data', 'E-commerce customer data with marketing channels'),
+                ('olistbr/brazilian-ecommerce', 'Brazilian e-commerce marketing data'),
+                ('mkechinov/ecommerce-events-history-in-cosmetics-shop', 'Cosmetics shop marketing events'),
+                ('retailrocket/ecommerce-dataset', 'E-commerce behavior with marketing attribution')
+            ]
+            
+            for dataset_id, description in datasets_to_try:
+                try:
+                    print(f"[KAGGLE] Attempting to download: {dataset_id}")
+                    
+                    # Download to cache directory
+                    kaggle.api.dataset_download_files(
+                        dataset_id, 
+                        path=self.cache_dir, 
+                        unzip=True, 
+                        quiet=False
+                    )
+                    
+                    # Find CSV files in the downloaded data
+                    import glob
+                    csv_files = glob.glob(f"{self.cache_dir}/*.csv")
+                    
+                    if csv_files:
+                        # Load the first CSV file
+                        df = pd.read_csv(csv_files[0])
+                        
+                        # Basic validation - ensure it has date-like and numeric columns
+                        if len(df) > 100 and any('date' in col.lower() or 'time' in col.lower() for col in df.columns):
+                            print(f"[SUCCESS] Loaded Kaggle dataset: {len(df)} rows from {csv_files[0]}")
+                            
+                            source_info = {
+                                'description': f'Kaggle: {description}',
+                                'dataset_id': dataset_id,
+                                'file_path': csv_files[0],
+                                'size': len(df),
+                                'quality': 'REAL',
+                                'source': 'kaggle'
+                            }
+                            
+                            return df, source_info
+                            
+                except Exception as e:
+                    print(f"[ERROR] Failed to load {dataset_id}: {str(e)[:50]}")
+                    continue
+            
+            # If no datasets worked, return None
+            return None, {}
+            
+        except Exception as e:
+            print(f"[ERROR] Kaggle setup failed: {str(e)}")
+            return None, {}
+    
+    def load_huggingface_advertising_data(self) -> Tuple[pd.DataFrame, Dict[str, Any]]:
+        """
+        Load real advertising data from HuggingFace datasets
+        
+        Returns:
+            Tuple of (dataframe, source_info)
+        """
+        try:
+            from datasets import load_dataset
+            
+            # Try real advertising/marketing datasets from HuggingFace
+            datasets_to_try = [
+                ('RafaM97/marketing_social_media', 'Social media marketing campaigns with industry and channel data'),
+                ('dianalogan/Marketing-Budget-and-Actual-Sales-Dataset', 'Marketing budget and actual sales correlation data'),
+                ('PeterBrendan/Ads_Creative_Text_Programmatic', 'Programmatic advertising creative text (1000 samples)'),
+                ('dvilasuero/marketing', 'Marketing dataset generated using Magpie alignment')
+            ]
+            
+            for dataset_id, description in datasets_to_try:
+                try:
+                    print(f"[HUGGINGFACE] Attempting to load: {dataset_id}")
+                    
+                    # Load dataset
+                    dataset = load_dataset(dataset_id, split='train')
+                    df = dataset.to_pandas()
+                    
+                    # Basic validation - check for minimum data size
+                    if len(df) > 50:
+                        print(f"[SUCCESS] Loaded HuggingFace dataset: {len(df)} rows")
+                        
+                        source_info = {
+                            'description': f'HuggingFace: {description}',
+                            'dataset_id': dataset_id,
+                            'size': len(df),
+                            'columns': list(df.columns),
+                            'quality': 'REAL',
+                            'source': 'huggingface'
+                        }
+                        
+                        return df, source_info
+                        
+                except Exception as e:
+                    print(f"[ERROR] Failed to load {dataset_id}: {str(e)[:50]}")
+                    continue
+            
+            # If no datasets worked, return None
+            return None, {}
+            
+        except Exception as e:
+            print(f"[ERROR] HuggingFace setup failed: {str(e)}")
+            return None, {}
+    
+    def fetch_campaign_performance(self, start_date, end_date, channels, campaigns=None, granularity='daily'):
+        """Fetch campaign performance data for API endpoints"""
+        try:
+            # Get the best available data
+            data, source_info, source_type = self.get_best_available_data()
+            
+            # Filter by date range if date column exists
+            date_cols = [col for col in data.columns if 'date' in col.lower()]
+            if date_cols:
+                data[date_cols[0]] = pd.to_datetime(data[date_cols[0]])
+                mask = (data[date_cols[0]] >= start_date) & (data[date_cols[0]] <= end_date)
+                data = data[mask]
+            
+            return data.to_dict('records')
+            
+        except Exception as e:
+            raise Exception(f"Failed to fetch campaign performance: {str(e)}")
+    
+    def fetch_journey_data(self, start_date, end_date, channels):
+        """Fetch customer journey data for attribution analysis"""
+        try:
+            # For now, return synthetic journey data
+            # In production, this would connect to customer journey tracking systems
+            import random
+            
+            journeys = []
+            for i in range(100):
+                customer_id = f"customer_{i:04d}"
+                touchpoints = random.randint(1, 5)
+                
+                for j in range(touchpoints):
+                    journeys.append({
+                        'customer_id': customer_id,
+                        'touchpoint_date': start_date + timedelta(days=random.randint(0, (end_date - start_date).days)),
+                        'channel': random.choice(channels),
+                        'touchpoint_order': j + 1,
+                        'campaign_id': f"campaign_{random.randint(1, 10):02d}",
+                        'converted': 1 if j == touchpoints - 1 and random.random() < 0.15 else 0
+                    })
+            
+            return journeys
+            
+        except Exception as e:
+            raise Exception(f"Failed to fetch journey data: {str(e)}")
+    
+    def fetch_performance_data(self, channels, days):
+        """Fetch historical performance data for optimization"""
+        try:
+            data, source_info, source_type = self.get_best_available_data()
+            return data.to_dict('records')
+        except Exception as e:
+            raise Exception(f"Failed to fetch performance data: {str(e)}")
+    
+    def fetch_saturation_data(self, channels, days):
+        """Fetch data for saturation analysis"""
+        try:
+            data, source_info, source_type = self.get_best_available_data()
+            return data.to_dict('records')
+        except Exception as e:
+            raise Exception(f"Failed to fetch saturation data: {str(e)}")

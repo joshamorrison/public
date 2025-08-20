@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  mmm-api-dev:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.dev
+    ports:
+      - "8000:8000"
+      - "8888:8888"
+    environment:
+      - ENVIRONMENT=development
+      - LOG_LEVEL=debug
+      - API_PREFIX=/api/v1
+      - PYTHONPATH=/app
+    volumes:
+      - ..:/app
+      - ../data:/app/data
+      - ../outputs:/app/outputs
+      - ../logs:/app/logs
+      - /app/venv  # Exclude virtual environment
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+
+  redis-dev:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_dev_data:/data
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+
+  postgres-dev:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: mmm_dev
+      POSTGRES_USER: mmm_user
+      POSTGRES_PASSWORD: mmm_password
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  jupyter:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.dev
+    ports:
+      - "8889:8888"
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+    volumes:
+      - ..:/app
+      - ../notebooks:/app/notebooks
+    working_dir: /app
+    command: >
+      sh -c "
+        mkdir -p /app/notebooks &&
+        jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root --NotebookApp.token='' --NotebookApp.password=''
+      "
+
+  adminer:
+    image: adminer
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres-dev
+    restart: unless-stopped
+
+volumes:
+  redis_dev_data:
+  postgres_dev_data:

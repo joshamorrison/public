@@ -1,0 +1,75 @@
+{
+  "title": "Campaign Budget Data Schema",
+  "description": "Schema for campaign budget allocation and optimization data",
+  "type": "object",
+  "properties": {
+    "campaign_id": {
+      "type": "string",
+      "description": "Unique campaign identifier",
+      "pattern": "^campaign_[0-9]{2}$",
+      "example": "campaign_01"
+    },
+    "channel": {
+      "type": "string",
+      "description": "Primary marketing channel for this campaign",
+      "enum": ["Search", "Social", "Display", "Video", "Email", "Direct"],
+      "example": "Search"
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Campaign start date",
+      "example": "2024-07-21"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Campaign end date",
+      "example": "2024-09-19"
+    },
+    "total_budget": {
+      "type": "number",
+      "description": "Total campaign budget",
+      "minimum": 10000,
+      "maximum": 100000,
+      "example": 55000.00
+    },
+    "daily_budget": {
+      "type": "number",
+      "description": "Daily spend limit",
+      "minimum": 300,
+      "maximum": 3000,
+      "example": 1500.00
+    },
+    "target_cpa": {
+      "type": "number",
+      "description": "Target cost per acquisition",
+      "minimum": 20,
+      "maximum": 80,
+      "example": 45.50
+    },
+    "target_roas": {
+      "type": "number",
+      "description": "Target return on ad spend",
+      "minimum": 2.0,
+      "maximum": 5.0,
+      "example": 3.2
+    },
+    "status": {
+      "type": "string",
+      "description": "Current campaign status",
+      "enum": ["active", "paused", "completed"],
+      "example": "active"
+    }
+  },
+  "required": ["campaign_id", "channel", "start_date", "end_date", "total_budget", "daily_budget", "target_cpa", "target_roas", "status"],
+  "source": {
+    "name": "Generated",
+    "quality": "SYNTHETIC", 
+    "description": "Generated campaign budget data for optimization testing",
+    "size": 20,
+    "campaigns": 20,
+    "active_percentage": "60%",
+    "last_updated": "2024-08-20"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "title": "Marketing Campaign Data Schema",
+  "description": "Schema for marketing campaign data from HuggingFace RafaM97/marketing_social_media dataset",
+  "type": "object",
+  "properties": {
+    "instruction": {
+      "type": "string",
+      "description": "Marketing task or objective description",
+      "examples": [
+        "Develop a social media campaign to increase brand awareness",
+        "Create a content calendar for B2B software company"
+      ]
+    },
+    "input": {
+      "type": "string",
+      "description": "Campaign context including company, audience, constraints, goals, and workflow stage",
+      "examples": [
+        "Company: GreenCycle Clothing\nTarget Audience: Environmentally conscious millennials\nConstraints: Limited budget ($5,000)"
+      ]
+    },
+    "response": {
+      "type": "string",
+      "description": "Detailed marketing campaign strategy and implementation plan",
+      "examples": [
+        "Revolutionize Your Wardrobe campaign, leveraging Instagram and TikTok influencers"
+      ]
+    }
+  },
+  "required": ["instruction", "input", "response"],
+  "source": {
+    "name": "HuggingFace",
+    "dataset_id": "RafaM97/marketing_social_media",
+    "quality": "REAL",
+    "description": "Social media marketing campaigns with industry and channel data",
+    "size": 689,
+    "last_updated": "2024-08-20"
+  }
+}

@@ -127,12 +127,81 @@ def check_data_sources():
     
     return data_sources
 
+def load_mmm_sample_data():
+    """Load MMM-ready sample data"""
+    try:
+        if os.path.exists('data/samples/mmm_time_series_data.csv'):
+            data = pd.read_csv('data/samples/mmm_time_series_data.csv')
+            source_info = {
+                'description': 'Local MMM Time Series Data (Generated)',
+                'quality': 'MMM_READY',
+                'size': len(data),
+                'source': 'local_mmm_sample'
+            }
+            return data, source_info, 'LOCAL_MMM'
+        else:
+            # Create MMM data on the fly
+            data, source_info = create_synthetic_marketing_data()
+            return data, source_info, 'SYNTHETIC'
+    except Exception as e:
+        # Final fallback
+        data, source_info = create_synthetic_marketing_data()
+        return data, source_info, 'SYNTHETIC'
+
 def load_best_available_data(data_sources):
-    """Load the best available dataset with intelligent fallbacks"""
+    """Load the best available dataset with intelligent tiered fallbacks"""
     print("\n[LOAD] LOADING MARKETING DATA")
     print("-" * 35)
     
-    # Try Kaggle first (highest quality)
+    # TIER 1: Try real MMM-ready local sample data first (fastest)
+    try:
+        print("[TIER 1] Checking for MMM-ready local sample data...")
+        if os.path.exists('data/samples/mmm_time_series_data.csv'):
+            data = pd.read_csv('data/samples/mmm_time_series_data.csv')
+            if len(data) > 50 and 'revenue' in data.columns:  # Ensure MMM-compatible data
+                print(f"[SUCCESS] Using local MMM sample data: {len(data)} rows")
+                source_info = {
+                    'description': 'Local MMM Time Series Data (Generated)',
+                    'quality': 'MMM_READY',
+                    'size': len(data),
+                    'source': 'local_mmm_sample'
+                }
+                return data, source_info, 'LOCAL_MMM'
+        
+        # Try the marketing campaign data and convert if needed
+        elif os.path.exists('data/samples/marketing_campaign_data.csv'):
+            data = pd.read_csv('data/samples/marketing_campaign_data.csv')
+            if len(data) > 100:
+                # Check if it's HuggingFace format (instruction/input/response)
+                if 'instruction' in data.columns and 'input' in data.columns:
+                    print(f"[INFO] Found HuggingFace data, converting to MMM format...")
+                    # For now, use the MMM sample data instead
+                    return load_mmm_sample_data()
+                else:
+                    print(f"[SUCCESS] Using local real sample data: {len(data)} rows")
+                    source_info = {
+                        'description': 'Local Real Sample Data (HuggingFace cached)',
+                        'quality': 'REAL_LOCAL',
+                        'size': len(data),
+                        'source': 'local_cache'
+                    }
+                    return data, source_info, 'LOCAL_REAL'
+    except Exception as e:
+        print(f"[ERROR] Local sample data failed: {str(e)[:50]}")
+    
+    # TIER 2: Try MediaDataClient with API fallbacks
+    try:
+        print("[TIER 2] Using MediaDataClient with API sources...")
+        from data.media_data_client import MediaDataClient
+        client = MediaDataClient()
+        data, source_info, source_type = client.get_best_available_data()
+        print(f"[SUCCESS] MediaDataClient returned: {source_type}")
+        return data, source_info, source_type
+    except Exception as e:
+        print(f"[ERROR] MediaDataClient failed: {str(e)[:50]}")
+    
+    # TIER 3: Try individual API sources
+    # Try Kaggle (highest quality API)
     if data_sources['kaggle']:
         try:
             data, source_info = load_kaggle_marketing_data()
@@ -142,7 +211,7 @@ def load_best_available_data(data_sources):
         except Exception as e:
             print(f"[ERROR] Kaggle data loading failed: {str(e)[:50]}")
     
-    # Try HuggingFace second (good quality)
+    # Try HuggingFace (good quality API)
     if data_sources['huggingface']:
         try:
             data, source_info = load_huggingface_advertising_data()
@@ -152,8 +221,8 @@ def load_best_available_data(data_sources):
         except Exception as e:
             print(f"[ERROR] HuggingFace data loading failed: {str(e)[:50]}")
     
-    # Fallback to synthetic data (always works)
-    print("[FALLBACK] Using synthetic marketing data")
+    # TIER 4: Fallback to synthetic data (always works)
+    print("[TIER 4] Using synthetic marketing data as final fallback")
     data, source_info = create_synthetic_marketing_data()
     print(f"[SUCCESS] Generated synthetic dataset: {source_info['description']}")
     return data, source_info, 'SYNTHETIC'
@@ -897,12 +966,24 @@ def check_advanced_integrations():
     
     # Apache Airflow
     try:
-        import airflow
+        # Try importing airflow with error handling for version issues
+        import warnings
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            import airflow
         integrations['airflow'] = True
         print("[OK] Apache Airflow: AVAILABLE (Workflow orchestration)")
     except ImportError:
         integrations['airflow'] = False
         print("[INSTALL] Apache Airflow: Install with 'pip install apache-airflow'")
+    except (TypeError, AttributeError, RuntimeError) as e:
+        # Handle version compatibility issues
+        integrations['airflow'] = False
+        print(f"[VERSION] Apache Airflow: Version compatibility issue (Python {sys.version_info.major}.{sys.version_info.minor})")
+        print("   Try: pip install 'apache-airflow>=2.5.0' or use Python 3.8-3.11")
+    except Exception as e:
+        integrations['airflow'] = False
+        print(f"[ERROR] Apache Airflow: {str(e)[:60]}...")
     
     # R integration
     try:

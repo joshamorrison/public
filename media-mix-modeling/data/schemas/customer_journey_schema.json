@@ -1,0 +1,61 @@
+{
+  "title": "Customer Journey Data Schema",
+  "description": "Schema for customer journey touchpoints used in attribution analysis",
+  "type": "object",
+  "properties": {
+    "customer_id": {
+      "type": "string",
+      "description": "Unique customer identifier",
+      "pattern": "^customer_[0-9]{4}$",
+      "example": "customer_0001"
+    },
+    "touchpoint_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date and time of touchpoint interaction",
+      "example": "2024-08-15 14:30:00"
+    },
+    "channel": {
+      "type": "string",
+      "description": "Marketing channel for this touchpoint",
+      "enum": ["Search", "Social", "Display", "Video", "Email", "Direct"],
+      "example": "Social"
+    },
+    "touchpoint_order": {
+      "type": "integer",
+      "description": "Order of touchpoint in customer journey (1 = first)",
+      "minimum": 1,
+      "maximum": 10,
+      "example": 2
+    },
+    "campaign_id": {
+      "type": "string",
+      "description": "Campaign identifier for this touchpoint",
+      "pattern": "^campaign_[0-9]{2}$",
+      "example": "campaign_05"
+    },
+    "converted": {
+      "type": "integer",
+      "description": "Whether this touchpoint resulted in conversion (0 or 1)",
+      "enum": [0, 1],
+      "example": 1
+    },
+    "conversion_value": {
+      "type": "number",
+      "description": "Value of conversion if converted (0 if not converted)",
+      "minimum": 0,
+      "maximum": 1000,
+      "example": 250.50
+    }
+  },
+  "required": ["customer_id", "touchpoint_date", "channel", "touchpoint_order", "campaign_id", "converted"],
+  "source": {
+    "name": "Generated",
+    "quality": "SYNTHETIC",
+    "description": "Generated customer journey data for attribution modeling",
+    "size": 3130,
+    "customers": 1000,
+    "conversion_rate": "~15%",
+    "last_updated": "2024-08-20"
+  }
+}

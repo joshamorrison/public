@@ -51,10 +51,11 @@ MANIFEST
 ehthumbs.db
 Thumbs.db
 
-# MMM Output Directories
+# MMM Runtime Directories (auto-created, not part of template)
 outputs/
 production/logs/
 cache/
+test_cache/
 
 # Production directory - selective tracking
 production/logs/
@@ -147,6 +148,18 @@ celerybeat.pid
 # mypy
 .mypy_cache/
 .dmypy.json
+
+# Additional cloud credentials and sensitive files
+credentials.json
+config.json
+
+# Database files
+*.db
+*.sqlite
+
+# Model files (additional formats)
+*.ckpt
+models/trained/
 dmypy.json
 
 # Pyre type checker
