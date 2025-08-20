@@ -1,0 +1,85 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Economic Indicators Data Schema",
+  "description": "Schema for economic time series data from FRED API",
+  "type": "object",
+  "properties": {
+    "series_id": {
+      "type": "string",
+      "description": "FRED series identifier (e.g., GDP, UNRATE, CPIAUCSL)",
+      "examples": ["GDPC1", "UNRATE", "CPIAUCSL", "DGS10"]
+    },
+    "title": {
+      "type": "string",
+      "description": "Full descriptive title of the economic indicator",
+      "examples": [
+        "Real Gross Domestic Product",
+        "Unemployment Rate",
+        "Consumer Price Index for All Urban Consumers"
+      ]
+    },
+    "units": {
+      "type": "string",
+      "description": "Units of measurement for the indicator",
+      "examples": [
+        "Billions of Chained 2012 Dollars",
+        "Percent",
+        "Index 1982-1984=100"
+      ]
+    },
+    "frequency": {
+      "type": "string",
+      "enum": ["Daily", "Weekly", "Monthly", "Quarterly", "Annual"],
+      "description": "Data frequency/periodicity"
+    },
+    "seasonal_adjustment": {
+      "type": "string",
+      "enum": ["Seasonally Adjusted", "Not Seasonally Adjusted"],
+      "description": "Whether data is seasonally adjusted"
+    },
+    "data": {
+      "type": "array",
+      "description": "Time series data points",
+      "items": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "description": "Observation date in YYYY-MM-DD format"
+          },
+          "value": {
+            "type": ["number", "null"],
+            "description": "Observed value (null for missing data)"
+          }
+        },
+        "required": ["date", "value"]
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional metadata about the series",
+      "properties": {
+        "source": {
+          "type": "string",
+          "description": "Data source organization",
+          "examples": ["Bureau of Economic Analysis", "Bureau of Labor Statistics"]
+        },
+        "release": {
+          "type": "string",
+          "description": "Statistical release containing the data"
+        },
+        "last_updated": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last update timestamp"
+        },
+        "notes": {
+          "type": "string",
+          "description": "Additional notes about the data series"
+        }
+      }
+    }
+  },
+  "required": ["series_id", "title", "data"]
+}

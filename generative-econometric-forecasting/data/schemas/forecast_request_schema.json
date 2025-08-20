@@ -1,0 +1,76 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Forecast Request Schema",
+  "description": "Schema for economic forecasting API requests",
+  "type": "object",
+  "properties": {
+    "indicators": {
+      "type": "array",
+      "description": "List of economic indicators to forecast",
+      "items": {
+        "type": "string",
+        "enum": [
+          "gdp",
+          "unemployment", 
+          "inflation",
+          "interest_rate",
+          "consumer_spending",
+          "housing_starts",
+          "manufacturing",
+          "retail_sales"
+        ]
+      },
+      "minItems": 1,
+      "maxItems": 10
+    },
+    "horizon": {
+      "type": "integer",
+      "description": "Forecast horizon in months",
+      "minimum": 1,
+      "maximum": 24,
+      "default": 12
+    },
+    "method": {
+      "type": "string",
+      "description": "Forecasting method to use",
+      "enum": [
+        "foundation",
+        "neural",
+        "statistical", 
+        "ensemble",
+        "sentiment_adjusted"
+      ],
+      "default": "foundation"
+    },
+    "model_tier": {
+      "type": "string",
+      "description": "Foundation model tier (if using foundation method)",
+      "enum": ["tier1", "tier2", "tier3", "auto"],
+      "default": "auto"
+    },
+    "start_date": {
+      "type": ["string", "null"],
+      "format": "date",
+      "description": "Start date for historical data (YYYY-MM-DD format)"
+    },
+    "confidence_interval": {
+      "type": "number",
+      "description": "Confidence interval for predictions",
+      "minimum": 0.8,
+      "maximum": 0.99,
+      "default": 0.95
+    },
+    "include_sentiment": {
+      "type": "boolean",
+      "description": "Include sentiment analysis in forecast",
+      "default": false
+    },
+    "generate_report": {
+      "type": "boolean", 
+      "description": "Generate executive summary report",
+      "default": true
+    }
+  },
+  "required": ["indicators"],
+  "additionalProperties": false
+}

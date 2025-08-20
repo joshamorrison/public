@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  econometric-api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: econometric-forecasting-api
+    ports:
+      - "8000:8000"
+    environment:
+      - LOG_LEVEL=INFO
+      - PYTHONPATH=/app
+    volumes:
+      - ../data:/app/data
+      - ../outputs:/app/outputs
+      - ../models:/app/models:ro
+    networks:
+      - econometric-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Redis for caching (optional)
+  redis:
+    image: redis:7-alpine
+    container_name: econometric-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - econometric-network
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+
+  # PostgreSQL for metadata storage (optional)
+  postgres:
+    image: postgres:15-alpine
+    container_name: econometric-postgres
+    environment:
+      - POSTGRES_DB=econometric_db
+      - POSTGRES_USER=econometric_user
+      - POSTGRES_PASSWORD=econometric_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - econometric-network
+    restart: unless-stopped
+
+  # Nginx reverse proxy (optional)
+  nginx:
+    image: nginx:alpine
+    container_name: econometric-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - econometric-api
+    networks:
+      - econometric-network
+    restart: unless-stopped
+
+volumes:
+  redis_data:
+    driver: local
+  postgres_data:
+    driver: local
+
+networks:
+  econometric-network:
+    driver: bridge

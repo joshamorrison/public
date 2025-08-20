@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  econometric-api-dev:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.dev
+    container_name: econometric-forecasting-dev
+    ports:
+      - "8000:8000"  # API
+      - "8888:8888"  # Jupyter
+      - "5678:5678"  # Debugger
+    environment:
+      - LOG_LEVEL=DEBUG
+      - PYTHONPATH=/app
+      - ENVIRONMENT=development
+    volumes:
+      - ..:/app  # Mount entire project for live development
+      - /app/venv  # Exclude virtual environment
+    networks:
+      - econometric-dev-network
+    stdin_open: true
+    tty: true
+    restart: "no"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health/status"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+
+  # Redis for development caching
+  redis-dev:
+    image: redis:7-alpine
+    container_name: econometric-redis-dev
+    ports:
+      - "6379:6379"
+    networks:
+      - econometric-dev-network
+    restart: "no"
+
+  # PostgreSQL for development
+  postgres-dev:
+    image: postgres:15-alpine
+    container_name: econometric-postgres-dev
+    environment:
+      - POSTGRES_DB=econometric_dev
+      - POSTGRES_USER=dev_user
+      - POSTGRES_PASSWORD=dev_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    networks:
+      - econometric-dev-network
+    restart: "no"
+
+  # Jupyter notebook for development
+  jupyter:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.dev
+    container_name: econometric-jupyter
+    command: jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser --allow-root
+    ports:
+      - "8888:8888"
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+    volumes:
+      - ..:/app
+      - jupyter_data:/home/appuser/.jupyter
+    networks:
+      - econometric-dev-network
+    restart: "no"
+
+volumes:
+  postgres_dev_data:
+    driver: local
+  jupyter_data:
+    driver: local
+
+networks:
+  econometric-dev-network:
+    driver: bridge

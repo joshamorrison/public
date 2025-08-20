@@ -1,0 +1,178 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Forecast Response Schema", 
+  "description": "Schema for economic forecasting API responses",
+  "type": "object",
+  "properties": {
+    "success": {
+      "type": "boolean",
+      "description": "Whether forecast succeeded"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["success", "partial_success", "failed", "in_progress"],
+      "description": "Detailed status of forecast operation"
+    },
+    "request_id": {
+      "type": "string",
+      "description": "Unique request identifier"
+    },
+    "forecasts": {
+      "type": "array",
+      "description": "Forecast results by indicator",
+      "items": {
+        "type": "object",
+        "properties": {
+          "indicator": {
+            "type": "string",
+            "description": "Economic indicator name"
+          },
+          "current_value": {
+            "type": ["number", "null"],
+            "description": "Most recent actual value"
+          },
+          "forecast_points": {
+            "type": "array",
+            "description": "Forecast data points",
+            "items": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "format": "date",
+                  "description": "Forecast date (YYYY-MM-DD)"
+                },
+                "value": {
+                  "type": "number",
+                  "description": "Forecasted value"
+                },
+                "lower_bound": {
+                  "type": ["number", "null"],
+                  "description": "Lower confidence bound"
+                },
+                "upper_bound": {
+                  "type": ["number", "null"], 
+                  "description": "Upper confidence bound"
+                },
+                "confidence": {
+                  "type": "number",
+                  "description": "Confidence level",
+                  "minimum": 0,
+                  "maximum": 1
+                }
+              },
+              "required": ["date", "value", "confidence"]
+            }
+          },
+          "model_info": {
+            "type": "object",
+            "description": "Information about the model used",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Model name"
+              },
+              "tier": {
+                "type": "string",
+                "description": "Model tier (tier1, tier2, tier3)"
+              },
+              "method": {
+                "type": "string",
+                "description": "Forecasting method"
+              },
+              "version": {
+                "type": "string",
+                "description": "Model version"
+              },
+              "performance_score": {
+                "type": ["number", "null"],
+                "description": "Model performance score",
+                "minimum": 0,
+                "maximum": 1
+              }
+            },
+            "required": ["name", "tier", "method", "version"]
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Additional metadata",
+            "additionalProperties": true
+          }
+        },
+        "required": ["indicator", "forecast_points", "model_info"]
+      }
+    },
+    "sentiment_analysis": {
+      "type": ["object", "null"],
+      "description": "Sentiment analysis data (if requested)",
+      "properties": {
+        "overall_sentiment": {
+          "type": "number",
+          "description": "Overall sentiment score (-1 to 1)",
+          "minimum": -1,
+          "maximum": 1
+        },
+        "sentiment_sources": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Data sources for sentiment"
+        },
+        "confidence": {
+          "type": "number",
+          "description": "Sentiment confidence score",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "impact_assessment": {
+          "type": "string",
+          "description": "Narrative impact assessment"
+        }
+      }
+    },
+    "executive_summary": {
+      "type": ["object", "null"],
+      "description": "Executive summary (if requested)",
+      "properties": {
+        "key_insights": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Key insights from analysis"
+        },
+        "risk_assessment": {
+          "type": "string",
+          "description": "Risk assessment narrative"
+        },
+        "recommendations": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Action recommendations"
+        },
+        "confidence_level": {
+          "type": "string",
+          "description": "Overall confidence assessment"
+        },
+        "generated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Summary generation timestamp"
+        }
+      }
+    },
+    "processing_time": {
+      "type": "number",
+      "description": "Processing time in seconds",
+      "minimum": 0
+    },
+    "model_performance": {
+      "type": "object",
+      "description": "Model performance metrics",
+      "additionalProperties": {"type": "number"}
+    },
+    "error": {
+      "type": ["string", "null"],
+      "description": "Error message if failed"
+    }
+  },
+  "required": ["success", "status", "request_id", "processing_time"],
+  "additionalProperties": false
+}

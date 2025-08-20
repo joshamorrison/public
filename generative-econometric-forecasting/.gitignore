@@ -147,3 +147,16 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+
+# Cloud credentials and sensitive files
+credentials.json
+*.pem
+config.json
+
+# Database files
+*.db
+*.sqlite
+
+# Model files (additional formats)
+*.ckpt
+models/trained/
