@@ -2,6 +2,78 @@
 
 Complete API documentation for the MMM platform components, models, and integrations.
 
+## ⚡ FastAPI Endpoints
+
+### Starting the Server
+
+```bash
+uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload
+```
+
+Access interactive documentation at: http://localhost:8000/docs
+
+### Health Endpoints
+
+#### GET /health
+Returns service status and dependency health checks.
+
+**Response:**
+```json
+{
+  "status": "healthy",
+  "timestamp": "2024-08-20T13:11:54.123456",
+  "dependencies": {
+    "pandas": "available",
+    "sklearn": "available",
+    "mlflow": "available"
+  }
+}
+```
+
+### Attribution Endpoints
+
+#### POST /attribution/analyze
+Performs multi-touch attribution analysis on customer journey data.
+
+**Request Body:**
+```json
+{
+  "customer_journeys": [...],
+  "attribution_model": "time_decay",
+  "lookback_window": 30,
+  "include_view_through": true
+}
+```
+
+#### POST /attribution/incrementality
+Runs incrementality testing to measure causal impact of campaigns.
+
+### Optimization Endpoints
+
+#### POST /optimization/optimize
+Multi-objective budget optimization across channels.
+
+**Request Body:**
+```json
+{
+  "current_budget": {
+    "tv": 45000,
+    "digital": 30000,
+    "social": 15000
+  },
+  "constraints": {
+    "total_budget": 100000,
+    "min_channel_spend": 5000
+  },
+  "objective": "roi"
+}
+```
+
+### Performance Endpoints
+
+#### POST /performance/analyze
+Comprehensive performance analysis with trend detection and anomaly identification.
+
 ## 🏗️ Core Models
 
 ### EconometricMMM
