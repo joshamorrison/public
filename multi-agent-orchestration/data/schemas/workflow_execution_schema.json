@@ -1,0 +1,359 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Workflow Execution Schema",
+  "description": "Schema for tracking workflow execution in the multi-agent orchestration platform",
+  "type": "object",
+  "required": ["workflow_id", "pattern_type", "execution_start", "stages"],
+  "properties": {
+    "workflow_id": {
+      "type": "string",
+      "description": "Unique identifier for the workflow execution",
+      "pattern": "^[a-zA-Z0-9_-]+$"
+    },
+    "workflow_name": {
+      "type": "string", 
+      "description": "Human-readable name for the workflow",
+      "maxLength": 200
+    },
+    "pattern_type": {
+      "type": "string",
+      "description": "Type of orchestration pattern used",
+      "enum": ["pipeline", "parallel", "supervisor", "reflective", "hybrid"]
+    },
+    "pattern_id": {
+      "type": "string",
+      "description": "ID of the pattern configuration used"
+    },
+    "execution_start": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Workflow execution start timestamp"
+    },
+    "execution_end": {
+      "type": "string", 
+      "format": "date-time",
+      "description": "Workflow execution completion timestamp"
+    },
+    "status": {
+      "type": "string",
+      "description": "Current execution status",
+      "enum": ["running", "completed", "failed", "cancelled", "paused"]
+    },
+    "priority": {
+      "type": "string",
+      "description": "Execution priority level",
+      "enum": ["low", "medium", "high", "urgent"],
+      "default": "medium"
+    },
+    "initiator": {
+      "type": "object",
+      "description": "Who or what initiated the workflow",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["user", "api", "scheduled", "triggered"]
+        },
+        "id": {
+          "type": "string",
+          "description": "Identifier of the initiator"
+        }
+      }
+    },
+    "business_context": {
+      "type": "object",
+      "description": "Business context for the workflow",
+      "properties": {
+        "industry": {
+          "type": "string"
+        },
+        "use_case": {
+          "type": "string"
+        },
+        "client_segment": {
+          "type": "string"
+        },
+        "business_value": {
+          "type": "object",
+          "properties": {
+            "estimated_value": {
+              "type": "number"
+            },
+            "value_currency": {
+              "type": "string",
+              "default": "USD"
+            },
+            "value_type": {
+              "type": "string",
+              "enum": ["cost_savings", "revenue_generation", "risk_reduction", "efficiency_gain"]
+            }
+          }
+        }
+      }
+    },
+    "stages": {
+      "type": "array",
+      "description": "Workflow execution stages",
+      "items": {
+        "type": "object",
+        "required": ["stage_id", "agent_id", "start_time"],
+        "properties": {
+          "stage_id": {
+            "type": "string",
+            "description": "Unique stage identifier"
+          },
+          "stage_name": {
+            "type": "string",
+            "description": "Human-readable stage name"
+          },
+          "agent_id": {
+            "type": "string",
+            "description": "ID of agent executing this stage"
+          },
+          "agent_type": {
+            "type": "string",
+            "description": "Type of agent used"
+          },
+          "start_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "end_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "duration_seconds": {
+            "type": "number",
+            "minimum": 0
+          },
+          "status": {
+            "type": "string",
+            "enum": ["pending", "running", "completed", "failed", "skipped"]
+          },
+          "input_data": {
+            "type": "object",
+            "description": "Input data for this stage"
+          },
+          "output_data": {
+            "type": "object", 
+            "description": "Output produced by this stage"
+          },
+          "performance_metrics": {
+            "type": "object",
+            "properties": {
+              "success": {
+                "type": "boolean"
+              },
+              "confidence_score": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "quality_score": {
+                "type": "number", 
+                "minimum": 0,
+                "maximum": 1
+              },
+              "tokens_used": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "cost_usd": {
+                "type": "number",
+                "minimum": 0
+              },
+              "retry_count": {
+                "type": "integer",
+                "minimum": 0,
+                "default": 0
+              }
+            }
+          },
+          "error_details": {
+            "type": "object",
+            "properties": {
+              "error_code": {
+                "type": "string"
+              },
+              "error_message": {
+                "type": "string"
+              },
+              "stack_trace": {
+                "type": "string"
+              },
+              "recovery_action": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "overall_metrics": {
+      "type": "object",
+      "description": "Overall workflow execution metrics",
+      "properties": {
+        "total_duration_seconds": {
+          "type": "number",
+          "minimum": 0
+        },
+        "total_cost_usd": {
+          "type": "number",
+          "minimum": 0
+        },
+        "total_tokens_used": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "success_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "average_confidence": {
+          "type": "number",
+          "minimum": 0, 
+          "maximum": 1
+        },
+        "average_quality": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "agents_involved": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "parallel_execution_efficiency": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "quality_gates": {
+      "type": "array",
+      "description": "Quality gate evaluations",
+      "items": {
+        "type": "object",
+        "properties": {
+          "gate_id": {
+            "type": "string"
+          },
+          "gate_type": {
+            "type": "string",
+            "enum": ["confidence_threshold", "quality_threshold", "time_limit", "cost_limit"]
+          },
+          "threshold_value": {
+            "type": "number"
+          },
+          "actual_value": {
+            "type": "number"  
+          },
+          "passed": {
+            "type": "boolean"
+          },
+          "evaluation_time": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    },
+    "stakeholder_feedback": {
+      "type": "object",
+      "description": "Stakeholder feedback on workflow results",
+      "properties": {
+        "satisfaction_score": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 5
+        },
+        "feedback_comments": {
+          "type": "string"
+        },
+        "business_impact_rating": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 5
+        },
+        "recommendations_accepted": {
+          "type": "boolean"
+        },
+        "feedback_date": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional workflow metadata",
+      "properties": {
+        "version": {
+          "type": "string"
+        },
+        "environment": {
+          "type": "string",
+          "enum": ["development", "staging", "production"]
+        },
+        "platform_version": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "related_workflows": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "workflow_id": "strategic_analysis_20240115_001",
+      "workflow_name": "Fortune 500 Market Entry Analysis", 
+      "pattern_type": "pipeline",
+      "pattern_id": "strategic_analysis_pipeline_v2",
+      "execution_start": "2024-01-15T09:00:00Z",
+      "execution_end": "2024-01-15T17:45:00Z", 
+      "status": "completed",
+      "priority": "high",
+      "initiator": {
+        "type": "user",
+        "id": "strategy_team_lead"
+      },
+      "business_context": {
+        "industry": "Technology",
+        "use_case": "Market Entry Decision",
+        "client_segment": "Fortune 500",
+        "business_value": {
+          "estimated_value": 50000000,
+          "value_currency": "USD", 
+          "value_type": "revenue_generation"
+        }
+      },
+      "overall_metrics": {
+        "total_duration_seconds": 31500,
+        "total_cost_usd": 47.82,
+        "total_tokens_used": 34567,
+        "success_rate": 1.0,
+        "average_confidence": 0.87,
+        "average_quality": 0.91,
+        "agents_involved": 4
+      },
+      "stakeholder_feedback": {
+        "satisfaction_score": 5,
+        "business_impact_rating": 5,
+        "recommendations_accepted": true,
+        "feedback_comments": "Exceptional analysis quality, enabled confident go/no-go decision",
+        "feedback_date": "2024-01-16T10:00:00Z"
+      }
+    }
+  ]
+}

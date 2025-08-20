@@ -53,19 +53,20 @@ Thumbs.db
 
 # MMM Runtime Directories (auto-created, not part of template)
 outputs/
-production/logs/
 cache/
 test_cache/
+production/
 
-# Production directory - selective tracking
-production/logs/
-production/artifacts/
-production/*.joblib
+# Trained models (runtime artifacts)
+*.joblib
+*.pkl
+*.h5
+*.pt
+*.pth
 
-# Keep important production files
-!production/
-!production/*.json
-!production/*.py
+# Keep model structure files
+!models/mmm/*.py
+!models/r_integration/*.py
 
 # Logs
 *.log

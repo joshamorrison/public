@@ -1,0 +1,227 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Agent Schema",
+  "description": "Schema for defining agents in the multi-agent orchestration platform",
+  "type": "object",
+  "required": ["agent_id", "name", "agent_type", "capabilities"],
+  "properties": {
+    "agent_id": {
+      "type": "string",
+      "description": "Unique identifier for the agent",
+      "pattern": "^[a-zA-Z0-9_-]+$",
+      "minLength": 3,
+      "maxLength": 50
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable name for the agent",
+      "minLength": 3,
+      "maxLength": 100
+    },
+    "agent_type": {
+      "type": "string",
+      "description": "Type of agent",
+      "enum": ["base", "supervisor", "researcher", "analyst", "critic", "synthesizer"]
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description of the agent's purpose and functionality",
+      "maxLength": 500
+    },
+    "capabilities": {
+      "type": "array",
+      "description": "List of capabilities this agent possesses",
+      "items": {
+        "type": "string",
+        "enum": [
+          "web_search",
+          "data_analysis", 
+          "statistical_analysis",
+          "pattern_recognition",
+          "content_generation",
+          "summarization",
+          "quality_assessment",
+          "feedback_generation",
+          "workflow_management",
+          "delegation",
+          "research",
+          "synthesis",
+          "review",
+          "coordination",
+          "information_gathering",
+          "report_generation",
+          "critical_thinking",
+          "problem_solving",
+          "evaluation",
+          "writing",
+          "compilation",
+          "integration",
+          "criticism",
+          "validation",
+          "improvement_suggestions",
+          "task_assignment",
+          "management",
+          "supervision",
+          "team_management",
+          "synchronization",
+          "orchestration"
+        ]
+      },
+      "uniqueItems": true,
+      "minItems": 1
+    },
+    "configuration": {
+      "type": "object",
+      "description": "Agent-specific configuration parameters",
+      "properties": {
+        "max_concurrent_tasks": {
+          "type": "integer",
+          "description": "Maximum number of tasks this agent can handle concurrently",
+          "minimum": 1,
+          "maximum": 20,
+          "default": 3
+        },
+        "timeout_seconds": {
+          "type": "integer",
+          "description": "Default timeout for task execution in seconds",
+          "minimum": 10,
+          "maximum": 3600,
+          "default": 300
+        },
+        "llm_provider": {
+          "type": "string",
+          "description": "Preferred LLM provider",
+          "enum": ["openai", "anthropic", "bedrock"],
+          "default": "anthropic"
+        },
+        "llm_config": {
+          "type": "string",
+          "description": "LLM configuration name to use",
+          "default": "default"
+        },
+        "quality_threshold": {
+          "type": "number",
+          "description": "Minimum quality threshold for task outputs",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "default": 0.7
+        },
+        "specializations": {
+          "type": "array",
+          "description": "Specific areas of specialization",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "performance_metrics": {
+      "type": "object",
+      "description": "Performance tracking metrics",
+      "properties": {
+        "tasks_completed": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0
+        },
+        "success_rate": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "default": 0.0
+        },
+        "average_confidence": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "default": 0.0
+        },
+        "average_execution_time": {
+          "type": "number",
+          "minimum": 0.0,
+          "default": 0.0
+        },
+        "total_processing_time": {
+          "type": "number",
+          "minimum": 0.0,
+          "default": 0.0
+        }
+      }
+    },
+    "status": {
+      "type": "string",
+      "description": "Current agent status",
+      "enum": ["active", "inactive", "maintenance", "error"],
+      "default": "active"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Agent creation timestamp"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last update timestamp"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional metadata",
+      "properties": {
+        "version": {
+          "type": "string",
+          "description": "Agent version"
+        },
+        "owner": {
+          "type": "string",
+          "description": "Agent owner or creator"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tags for categorization"
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "agent_id": "researcher_001",
+      "name": "Market Research Specialist",
+      "agent_type": "researcher",
+      "description": "Specialized agent for comprehensive market research and competitive analysis",
+      "capabilities": [
+        "web_search",
+        "data_analysis", 
+        "research",
+        "information_gathering",
+        "report_generation"
+      ],
+      "configuration": {
+        "max_concurrent_tasks": 2,
+        "timeout_seconds": 600,
+        "llm_provider": "anthropic",
+        "llm_config": "researcher",
+        "quality_threshold": 0.8,
+        "specializations": ["market_analysis", "competitive_intelligence", "industry_research"]
+      },
+      "performance_metrics": {
+        "tasks_completed": 45,
+        "success_rate": 0.93,
+        "average_confidence": 0.87,
+        "average_execution_time": 180.5,
+        "total_processing_time": 8122.5
+      },
+      "status": "active",
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-15T14:30:00Z",
+      "metadata": {
+        "version": "1.2.0",
+        "owner": "platform_admin",
+        "tags": ["research", "market_analysis", "specialist"]
+      }
+    }
+  ]
+}

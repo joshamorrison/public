@@ -1,0 +1,161 @@
+[
+  {
+    "pattern_id": "strategic_analysis_pipeline",
+    "pattern_type": "pipeline", 
+    "name": "Strategic Analysis Pipeline",
+    "description": "End-to-end pipeline for strategic business analysis and decision support",
+    "stages": [
+      {
+        "stage_name": "Market Research",
+        "agent_type": "researcher",
+        "typical_duration": 1800,
+        "success_rate": 0.94,
+        "output_requirements": ["market_size", "competitive_landscape", "trend_analysis"]
+      },
+      {
+        "stage_name": "Financial Analysis", 
+        "agent_type": "analyst",
+        "typical_duration": 1200,
+        "success_rate": 0.96,
+        "output_requirements": ["cost_analysis", "revenue_projections", "roi_calculations"]
+      },
+      {
+        "stage_name": "Risk Assessment",
+        "agent_type": "analyst", 
+        "typical_duration": 900,
+        "success_rate": 0.91,
+        "output_requirements": ["risk_matrix", "mitigation_strategies", "scenario_analysis"]
+      },
+      {
+        "stage_name": "Strategy Synthesis",
+        "agent_type": "synthesizer",
+        "typical_duration": 1500,
+        "success_rate": 0.89,
+        "output_requirements": ["strategic_recommendations", "implementation_roadmap", "success_metrics"]
+      },
+      {
+        "stage_name": "Quality Review",
+        "agent_type": "critic",
+        "typical_duration": 600,
+        "success_rate": 0.97,
+        "output_requirements": ["quality_assessment", "improvement_recommendations", "validation_report"]
+      }
+    ],
+    "total_executions": 45,
+    "overall_success_rate": 0.87,
+    "average_completion_time": 6000,
+    "use_cases": ["market_entry", "product_launch", "strategic_planning", "investment_decisions"]
+  },
+  {
+    "pattern_id": "research_synthesis_parallel",
+    "pattern_type": "parallel",
+    "name": "Parallel Research Synthesis", 
+    "description": "Parallel research across multiple domains with coordinated synthesis",
+    "parallel_agents": [
+      {
+        "agent_type": "researcher",
+        "specialization": "technology_trends",
+        "weight": 1.2,
+        "typical_duration": 1400,
+        "success_rate": 0.93
+      },
+      {
+        "agent_type": "researcher", 
+        "specialization": "market_analysis",
+        "weight": 1.0,
+        "typical_duration": 1600,
+        "success_rate": 0.95
+      },
+      {
+        "agent_type": "researcher",
+        "specialization": "regulatory_environment", 
+        "weight": 0.8,
+        "typical_duration": 1800,
+        "success_rate": 0.91
+      }
+    ],
+    "synthesis_stage": {
+      "agent_type": "synthesizer",
+      "duration": 1200,
+      "success_rate": 0.88
+    },
+    "total_executions": 23,
+    "overall_success_rate": 0.84,
+    "average_completion_time": 3200,
+    "use_cases": ["comprehensive_analysis", "multi_domain_research", "due_diligence"]
+  },
+  {
+    "pattern_id": "content_optimization_reflective",
+    "pattern_type": "reflective",
+    "name": "Content Optimization with Iterative Refinement",
+    "description": "Iterative content creation and refinement with expert feedback",
+    "primary_agent": {
+      "agent_type": "synthesizer",
+      "role": "content_creator"
+    },
+    "critic_agents": [
+      {
+        "agent_type": "critic",
+        "specialization": "content_quality",
+        "feedback_weight": 0.6
+      },
+      {
+        "agent_type": "critic", 
+        "specialization": "technical_accuracy",
+        "feedback_weight": 0.4
+      }
+    ],
+    "iteration_metrics": {
+      "max_iterations": 3,
+      "convergence_threshold": 0.9,
+      "average_iterations": 2.3,
+      "improvement_per_iteration": 0.15
+    },
+    "total_executions": 34,
+    "overall_success_rate": 0.91,
+    "average_completion_time": 2800,
+    "use_cases": ["report_writing", "presentation_creation", "documentation", "proposal_development"]
+  },
+  {
+    "pattern_id": "enterprise_supervisor_coordination",
+    "pattern_type": "supervisor",
+    "name": "Enterprise Project Coordination",
+    "description": "Supervisor-led coordination of complex enterprise projects",
+    "supervisor_agent": {
+      "agent_type": "supervisor",
+      "coordination_style": "adaptive",
+      "decision_authority": "high"
+    },
+    "specialist_agents": [
+      {
+        "agent_type": "researcher",
+        "specialization": "market_intelligence",
+        "allocation": 0.3
+      },
+      {
+        "agent_type": "analyst",
+        "specialization": "financial_modeling", 
+        "allocation": 0.25
+      },
+      {
+        "agent_type": "analyst",
+        "specialization": "operational_analysis",
+        "allocation": 0.25
+      },
+      {
+        "agent_type": "synthesizer",
+        "specialization": "executive_reporting",
+        "allocation": 0.2
+      }
+    ],
+    "coordination_metrics": {
+      "task_distribution_efficiency": 0.87,
+      "resource_utilization": 0.92,
+      "deadline_adherence": 0.89
+    },
+    "total_executions": 18,
+    "overall_success_rate": 0.94,
+    "average_completion_time": 7200,
+    "use_cases": ["large_scale_analysis", "multi_stakeholder_projects", "complex_decision_making"]
+  }
+]

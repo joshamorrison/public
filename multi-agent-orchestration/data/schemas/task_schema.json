@@ -1,0 +1,150 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Task Schema",
+  "description": "Schema for defining tasks in the multi-agent orchestration platform",
+  "type": "object",
+  "required": ["type", "description"],
+  "properties": {
+    "type": {
+      "type": "string",
+      "description": "Type of task to be performed",
+      "enum": ["research", "analysis", "synthesis", "review", "coordination", "general"]
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description of the task",
+      "minLength": 10,
+      "maxLength": 2000
+    },
+    "priority": {
+      "type": "string",
+      "description": "Task priority level",
+      "enum": ["low", "medium", "high", "urgent"],
+      "default": "medium"
+    },
+    "deadline": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Task deadline in ISO 8601 format"
+    },
+    "required_capabilities": {
+      "type": "array",
+      "description": "List of capabilities required to complete this task",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "requirements": {
+      "type": "object",
+      "description": "Additional task requirements and constraints",
+      "properties": {
+        "quality_level": {
+          "type": "string",
+          "enum": ["basic", "standard", "high", "premium"],
+          "default": "standard"
+        },
+        "depth": {
+          "type": "string",
+          "enum": ["surface", "standard", "comprehensive", "exhaustive"],
+          "default": "standard"
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Preferred information sources"
+        },
+        "focus_areas": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Specific areas to focus on"
+        },
+        "target_audience": {
+          "type": "string",
+          "description": "Intended audience for the output"
+        },
+        "output_format": {
+          "type": "string",
+          "enum": ["text", "json", "markdown", "report", "slides"],
+          "default": "text"
+        }
+      }
+    },
+    "context": {
+      "type": "object",
+      "description": "Additional context information",
+      "properties": {
+        "background": {
+          "type": "string",
+          "description": "Background information relevant to the task"
+        },
+        "constraints": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Constraints or limitations to consider"
+        },
+        "related_tasks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "IDs of related or dependent tasks"
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional metadata for the task",
+      "properties": {
+        "created_by": {
+          "type": "string",
+          "description": "ID of the user or system that created the task"
+        },
+        "workflow_id": {
+          "type": "string",
+          "description": "ID of the workflow this task belongs to"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tags for categorizing and searching tasks"
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "type": "research",
+      "description": "Conduct comprehensive market research on AI-powered business automation tools, focusing on competitive landscape and emerging trends",
+      "priority": "high",
+      "deadline": "2024-12-31T23:59:59Z",
+      "required_capabilities": ["web_search", "data_analysis", "research", "market_analysis"],
+      "requirements": {
+        "quality_level": "high",
+        "depth": "comprehensive",
+        "sources": ["industry_reports", "academic_papers", "news_articles", "company_websites"],
+        "focus_areas": ["market_size", "key_players", "pricing_models", "technology_trends"],
+        "target_audience": "C-level executives",
+        "output_format": "report"
+      },
+      "context": {
+        "background": "Company is considering entering the business automation market",
+        "constraints": ["budget_under_50k", "timeline_6_weeks"],
+        "related_tasks": ["competitive_analysis_001", "financial_analysis_002"]
+      },
+      "metadata": {
+        "created_by": "user_123",
+        "workflow_id": "market_entry_workflow_001",
+        "tags": ["market_research", "AI", "automation", "strategic_planning"]
+      }
+    }
+  ]
+}

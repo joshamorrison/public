@@ -1,0 +1,104 @@
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv/
+.env/
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Environment Variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE Files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Output Directories
+outputs/
+logs/
+cache/
+
+# Logs
+*.log
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+*.ipynb
+
+# Model Files 
+*.pkl
+*.joblib
+*.h5
+*.pt
+*.pth
+*.ckpt
+models/trained/
+
+# Temporary Files
+*.tmp
+*.temp
+.cache/
+.pytest_cache/
+
+# Coverage Reports
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+.hypothesis/
+
+# Cloud credentials and sensitive files
+credentials.json
+*.pem
+config.json
+
+# Database files
+*.db
+*.sqlite
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Jupyter
+.ipynb_checkpoints/

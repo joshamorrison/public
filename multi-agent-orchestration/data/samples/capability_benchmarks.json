@@ -1,0 +1,166 @@
+[
+  {
+    "benchmark_name": "Enterprise Research Tasks",
+    "description": "Benchmarking agent performance on real enterprise research scenarios",
+    "benchmark_date": "2024-01-15",
+    "tasks": [
+      {
+        "task_name": "Market Analysis - Cloud Computing",
+        "description": "Analyze the global cloud computing market including AWS, Azure, GCP market share and growth",
+        "expected_capabilities": ["web_search", "data_analysis", "market_research"],
+        "difficulty": "medium",
+        "ground_truth_sources": ["Gartner Magic Quadrant", "IDC Cloud Services Report", "Synergy Research"],
+        "success_criteria": {
+          "accuracy_threshold": 0.85,
+          "completeness_threshold": 0.80,
+          "time_limit_seconds": 1800
+        },
+        "agent_results": [
+          {
+            "agent_id": "researcher_001",
+            "accuracy": 0.89,
+            "completeness": 0.84,
+            "execution_time": 1654,
+            "confidence": 0.87,
+            "sources_found": 28,
+            "key_insights": [
+              "AWS maintains 33% market share in Q3 2024",
+              "Azure growing at 31% YoY, fastest among major providers",
+              "Multi-cloud adoption reached 76% of enterprises"
+            ]
+          },
+          {
+            "agent_id": "researcher_002", 
+            "accuracy": 0.82,
+            "completeness": 0.78,
+            "execution_time": 1923,
+            "confidence": 0.81,
+            "sources_found": 22,
+            "key_insights": [
+              "Cloud infrastructure spending increased 23% in 2024",
+              "Edge computing integration driving new growth",
+              "Hybrid cloud solutions gaining enterprise traction"
+            ]
+          }
+        ]
+      },
+      {
+        "task_name": "Regulatory Analysis - AI Governance",
+        "description": "Research current AI regulations in US, EU, and China with impact assessment", 
+        "expected_capabilities": ["web_search", "legal_analysis", "policy_research"],
+        "difficulty": "high",
+        "ground_truth_sources": ["EU AI Act official text", "US NIST AI Framework", "China AI regulations"],
+        "success_criteria": {
+          "accuracy_threshold": 0.90,
+          "completeness_threshold": 0.85,
+          "time_limit_seconds": 2400
+        },
+        "agent_results": [
+          {
+            "agent_id": "researcher_001",
+            "accuracy": 0.92,
+            "completeness": 0.88,
+            "execution_time": 2156,
+            "confidence": 0.91,
+            "sources_found": 31,
+            "key_insights": [
+              "EU AI Act enforcement begins August 2024 for prohibited practices",
+              "US executive order establishes safety testing requirements",
+              "China's algorithm recommendation regulations affect AI deployment"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "benchmark_name": "Financial Analysis Capabilities",
+    "description": "Testing analytical capabilities on real financial data and scenarios",
+    "benchmark_date": "2024-01-10", 
+    "tasks": [
+      {
+        "task_name": "Tech Stock Performance Analysis",
+        "description": "Analyze Q4 2023 performance of FAANG+ stocks with market context",
+        "expected_capabilities": ["data_analysis", "financial_modeling", "statistical_analysis"],
+        "difficulty": "medium",
+        "ground_truth_sources": ["SEC 10-K filings", "Yahoo Finance", "Bloomberg Terminal"],
+        "success_criteria": {
+          "accuracy_threshold": 0.88,
+          "completeness_threshold": 0.82,
+          "time_limit_seconds": 1200
+        },
+        "agent_results": [
+          {
+            "agent_id": "analyst_001",
+            "accuracy": 0.90,
+            "completeness": 0.85,
+            "execution_time": 1089,
+            "confidence": 0.87,
+            "data_points_analyzed": 450,
+            "key_insights": [
+              "NVIDIA showed 206% revenue growth driven by AI demand",
+              "Meta's Reality Labs lost $13.7B but VR headset sales increased",
+              "Apple services revenue reached record $85.2B, up 11% YoY"
+            ],
+            "visualizations_created": 12
+          },
+          {
+            "agent_id": "analyst_002",
+            "accuracy": 0.85,
+            "completeness": 0.79,
+            "execution_time": 1245,
+            "confidence": 0.83,
+            "data_points_analyzed": 380,
+            "key_insights": [
+              "Technology sector P/E ratios normalized from 2021 highs",
+              "Cloud revenue growth rates stabilizing around 25-30%",
+              "AI-related capital expenditures increased across all major players"
+            ],
+            "visualizations_created": 8
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "benchmark_name": "Content Synthesis Quality",
+    "description": "Evaluating synthesis and content creation capabilities",
+    "benchmark_date": "2024-01-08",
+    "tasks": [
+      {
+        "task_name": "Executive Summary Creation",
+        "description": "Create executive summary from multiple research reports on digital transformation",
+        "expected_capabilities": ["content_generation", "summarization", "synthesis"],
+        "difficulty": "medium",
+        "input_sources": [
+          "McKinsey Digital Transformation Report 2024",
+          "Deloitte Tech Trends 2024", 
+          "BCG Digital Acceleration Index"
+        ],
+        "success_criteria": {
+          "readability_score": 0.80,
+          "accuracy_threshold": 0.85,
+          "completeness_threshold": 0.80,
+          "time_limit_seconds": 900
+        },
+        "agent_results": [
+          {
+            "agent_id": "synthesizer_001",
+            "readability_score": 0.84,
+            "accuracy": 0.88,
+            "completeness": 0.85,
+            "execution_time": 734,
+            "confidence": 0.88,
+            "word_count": 850,
+            "sections_created": 6,
+            "key_themes_identified": [
+              "Cloud-first strategies driving 40% faster time-to-market",
+              "Data-driven decision making increases operational efficiency by 23%", 
+              "Employee digital skills gap remains primary transformation barrier"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

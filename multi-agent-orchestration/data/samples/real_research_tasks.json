@@ -1,0 +1,106 @@
+[
+  {
+    "task_id": "market_research_001",
+    "type": "research",
+    "description": "Analyze the current state of the enterprise AI automation market, including key players, market size, growth trends, and adoption barriers",
+    "priority": "high",
+    "required_capabilities": ["web_search", "data_analysis", "research", "market_analysis"],
+    "requirements": {
+      "quality_level": "high",
+      "depth": "comprehensive",
+      "sources": ["Gartner", "McKinsey", "Forrester", "IDC", "Deloitte", "PwC"],
+      "focus_areas": [
+        "Market size and growth projections",
+        "Key vendors (Microsoft, Google, Amazon, OpenAI, Anthropic)",
+        "Enterprise adoption rates",
+        "Implementation challenges",
+        "ROI metrics and case studies",
+        "Regulatory considerations"
+      ],
+      "target_audience": "C-level executives and strategic planners",
+      "output_format": "report"
+    },
+    "context": {
+      "background": "Fortune 500 company evaluating AI automation investments for 2024-2025",
+      "constraints": ["Public information only", "Focus on enterprise segment", "North American market priority"]
+    }
+  },
+  {
+    "task_id": "competitive_analysis_002", 
+    "type": "analysis",
+    "description": "Conduct competitive analysis of major cloud infrastructure providers (AWS, Azure, GCP) focusing on AI/ML services, pricing, and enterprise features",
+    "priority": "medium",
+    "required_capabilities": ["data_analysis", "comparison_analysis", "research"],
+    "requirements": {
+      "quality_level": "standard",
+      "depth": "comprehensive",
+      "focus_areas": [
+        "AI/ML service offerings comparison",
+        "Pricing models and cost analysis", 
+        "Enterprise security and compliance features",
+        "Performance benchmarks",
+        "Integration capabilities",
+        "Support and documentation quality"
+      ],
+      "output_format": "markdown"
+    }
+  },
+  {
+    "task_id": "regulatory_research_003",
+    "type": "research", 
+    "description": "Research current and upcoming AI regulations in major markets (EU AI Act, US executive orders, China AI regulations) and their impact on enterprise AI deployment",
+    "priority": "high",
+    "required_capabilities": ["web_search", "research", "legal_analysis", "policy_analysis"],
+    "requirements": {
+      "quality_level": "high",
+      "depth": "comprehensive",
+      "sources": ["Official government sources", "Legal databases", "Policy think tanks"],
+      "focus_areas": [
+        "EU AI Act compliance requirements",
+        "US AI governance framework",
+        "China AI regulations impact",
+        "Industry-specific regulations (healthcare, finance)",
+        "Cross-border data transfer implications",
+        "Compliance timeline and deadlines"
+      ]
+    }
+  },
+  {
+    "task_id": "technology_trends_004",
+    "type": "research",
+    "description": "Analyze emerging trends in large language models, multimodal AI, and agent-based systems for enterprise applications",
+    "priority": "medium", 
+    "required_capabilities": ["web_search", "research", "technology_analysis"],
+    "requirements": {
+      "depth": "standard",
+      "sources": ["arXiv", "IEEE", "ACM", "Nature", "Science", "MIT Technology Review"],
+      "focus_areas": [
+        "Latest LLM architectures and capabilities",
+        "Multimodal AI developments",
+        "Agent orchestration frameworks",
+        "Edge AI and on-premise deployment",
+        "AI safety and alignment research",
+        "Open source vs proprietary models"
+      ]
+    }
+  },
+  {
+    "task_id": "financial_analysis_005",
+    "type": "analysis",
+    "description": "Analyze the financial performance and AI investment strategies of major technology companies (Apple, Microsoft, Google, Amazon, Meta, Tesla, NVIDIA)",
+    "priority": "medium",
+    "required_capabilities": ["data_analysis", "financial_analysis", "research"],
+    "requirements": {
+      "quality_level": "high",
+      "sources": ["SEC filings", "Annual reports", "Quarterly earnings calls", "Yahoo Finance", "Bloomberg"],
+      "focus_areas": [
+        "R&D spending on AI initiatives",
+        "Revenue from AI-related products/services", 
+        "AI talent acquisition and retention",
+        "Strategic partnerships and acquisitions",
+        "Capital expenditures on AI infrastructure",
+        "Market valuation impact of AI announcements"
+      ]
+    }
+  }
+]

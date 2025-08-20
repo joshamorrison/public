@@ -1,0 +1,137 @@
+[
+  {
+    "collaboration_pair": "researcher_001 + analyst_001",
+    "interaction_count": 47,
+    "collaboration_quality_score": 0.91,
+    "average_handoff_time": 23.4,
+    "success_rate": 0.94,
+    "common_workflows": ["market_analysis", "competitive_intelligence", "due_diligence"],
+    "performance_metrics": {
+      "combined_output_quality": 0.89,
+      "time_efficiency": 0.87,
+      "stakeholder_satisfaction": 0.92,
+      "revision_cycles_avg": 1.2
+    },
+    "interaction_patterns": {
+      "typical_sequence": ["research", "data_handoff", "analysis", "validation", "reporting"],
+      "handoff_quality": 0.88,
+      "communication_clarity": 0.91,
+      "context_preservation": 0.86
+    },
+    "optimization_opportunities": [
+      "Standardize data formats for faster handoffs",
+      "Implement real-time collaboration on complex analyses",
+      "Create shared templates for recurring workflows"
+    ]
+  },
+  {
+    "collaboration_pair": "analyst_001 + synthesizer_001", 
+    "interaction_count": 34,
+    "collaboration_quality_score": 0.87,
+    "average_handoff_time": 18.7,
+    "success_rate": 0.91,
+    "common_workflows": ["executive_reporting", "investment_analysis", "strategic_planning"],
+    "performance_metrics": {
+      "combined_output_quality": 0.93,
+      "time_efficiency": 0.89,
+      "stakeholder_satisfaction": 0.94,
+      "revision_cycles_avg": 1.4
+    },
+    "interaction_patterns": {
+      "typical_sequence": ["analysis", "insight_extraction", "narrative_creation", "formatting", "review"],
+      "handoff_quality": 0.91,
+      "communication_clarity": 0.89,
+      "context_preservation": 0.88
+    },
+    "strength_areas": [
+      "Excellent at translating complex analysis into clear narratives",
+      "Strong alignment on executive communication standards",
+      "Efficient iteration cycles for content refinement"
+    ]
+  },
+  {
+    "collaboration_pair": "synthesizer_001 + critic_001",
+    "interaction_count": 56,
+    "collaboration_quality_score": 0.94,
+    "average_handoff_time": 15.2,
+    "success_rate": 0.96,
+    "common_workflows": ["content_optimization", "report_refinement", "quality_assurance"],
+    "performance_metrics": {
+      "combined_output_quality": 0.95,
+      "time_efficiency": 0.92,
+      "stakeholder_satisfaction": 0.96,
+      "revision_cycles_avg": 2.1
+    },
+    "interaction_patterns": {
+      "typical_sequence": ["draft_creation", "initial_review", "revision", "detailed_review", "final_polish"],
+      "handoff_quality": 0.93,
+      "communication_clarity": 0.95,
+      "context_preservation": 0.91
+    },
+    "best_practices": [
+      "Structured feedback format increases efficiency",
+      "Iterative refinement produces highest quality outputs",
+      "Clear quality criteria upfront reduces revision cycles"
+    ]
+  },
+  {
+    "collaboration_pair": "supervisor_001 + researcher_001",
+    "interaction_count": 28,
+    "collaboration_quality_score": 0.85,
+    "average_handoff_time": 31.8,
+    "success_rate": 0.89,
+    "common_workflows": ["task_coordination", "resource_allocation", "quality_oversight"],
+    "performance_metrics": {
+      "combined_output_quality": 0.86,
+      "time_efficiency": 0.81,
+      "stakeholder_satisfaction": 0.88,
+      "revision_cycles_avg": 1.6
+    },
+    "coordination_effectiveness": {
+      "task_prioritization": 0.87,
+      "resource_optimization": 0.83,
+      "deadline_management": 0.91,
+      "quality_control": 0.89
+    },
+    "improvement_areas": [
+      "Reduce coordination overhead through better automation",
+      "Implement clearer escalation procedures",
+      "Enhance real-time status visibility"
+    ]
+  },
+  {
+    "collaboration_triplet": "researcher_001 + analyst_001 + synthesizer_001",
+    "workflow_name": "Strategic Analysis Pipeline",
+    "interaction_count": 23,
+    "overall_quality_score": 0.92,
+    "pipeline_efficiency": 0.88,
+    "end_to_end_success_rate": 0.87,
+    "stage_performance": [
+      {
+        "stage": "research_to_analysis",
+        "handoff_quality": 0.89,
+        "information_completeness": 0.91,
+        "processing_time_avg": 847,
+        "success_rate": 0.93
+      },
+      {
+        "stage": "analysis_to_synthesis", 
+        "handoff_quality": 0.91,
+        "information_completeness": 0.88,
+        "processing_time_avg": 623,
+        "success_rate": 0.91
+      },
+      {
+        "stage": "end_to_end",
+        "total_processing_time_avg": 3420,
+        "stakeholder_satisfaction": 0.94,
+        "business_impact_score": 0.89
+      }
+    ],
+    "workflow_optimizations": [
+      "Parallel processing opportunities in research phase",
+      "Automated quality gates between stages",
+      "Real-time collaboration tools for complex analyses"
+    ]
+  }
+]

@@ -1,0 +1,135 @@
+{
+  "default": {
+    "provider": "openai",
+    "model_name": "gpt-3.5-turbo",
+    "temperature": 0.7,
+    "max_tokens": 2048,
+    "top_p": 1.0,
+    "frequency_penalty": 0.0,
+    "presence_penalty": 0.0,
+    "timeout": 30,
+    "max_retries": 3,
+    "use_case": "general_purpose",
+    "cost_per_1k_tokens": {
+      "input": 0.0015,
+      "output": 0.002
+    }
+  },
+  "researcher": {
+    "provider": "openai",
+    "model_name": "gpt-4",
+    "temperature": 0.3,
+    "max_tokens": 4096,
+    "top_p": 0.9,
+    "frequency_penalty": 0.1,
+    "presence_penalty": 0.1,
+    "timeout": 60,
+    "max_retries": 3,
+    "use_case": "research_analysis",
+    "cost_per_1k_tokens": {
+      "input": 0.03,
+      "output": 0.06
+    },
+    "system_prompt": "You are a specialist research agent focused on comprehensive information gathering and analysis. Provide detailed, well-sourced insights."
+  },
+  "analyst": {
+    "provider": "openai",
+    "model_name": "gpt-4",
+    "temperature": 0.2,
+    "max_tokens": 3072,
+    "top_p": 0.8,
+    "frequency_penalty": 0.0,
+    "presence_penalty": 0.0,
+    "timeout": 45,
+    "max_retries": 3,
+    "use_case": "data_analysis",
+    "cost_per_1k_tokens": {
+      "input": 0.03,
+      "output": 0.06
+    },
+    "system_prompt": "You are an analytical specialist agent. Focus on data interpretation, pattern recognition, and quantitative insights."
+  },
+  "synthesizer": {
+    "provider": "openai",
+    "model_name": "gpt-4-turbo",
+    "temperature": 0.6,
+    "max_tokens": 4096,
+    "top_p": 0.95,
+    "frequency_penalty": 0.2,
+    "presence_penalty": 0.1,
+    "timeout": 90,
+    "max_retries": 3,
+    "use_case": "content_synthesis",
+    "cost_per_1k_tokens": {
+      "input": 0.01,
+      "output": 0.03
+    },
+    "system_prompt": "You are a synthesis specialist agent. Combine multiple inputs into coherent, well-structured outputs."
+  },
+  "critic": {
+    "provider": "openai",
+    "model_name": "gpt-4",
+    "temperature": 0.1,
+    "max_tokens": 2048,
+    "top_p": 0.7,
+    "frequency_penalty": 0.0,
+    "presence_penalty": 0.2,
+    "timeout": 30,
+    "max_retries": 3,
+    "use_case": "quality_review",
+    "cost_per_1k_tokens": {
+      "input": 0.03,
+      "output": 0.06
+    },
+    "system_prompt": "You are a critical review specialist agent. Evaluate quality, identify issues, and provide constructive feedback."
+  },
+  "supervisor": {
+    "provider": "openai",
+    "model_name": "gpt-4",
+    "temperature": 0.4,
+    "max_tokens": 3072,
+    "top_p": 0.85,
+    "frequency_penalty": 0.1,
+    "presence_penalty": 0.1,
+    "timeout": 45,
+    "max_retries": 3,
+    "use_case": "workflow_coordination",
+    "cost_per_1k_tokens": {
+      "input": 0.03,
+      "output": 0.06
+    },
+    "system_prompt": "You are a supervisor agent responsible for coordinating workflows and managing specialist agents."
+  },
+  "fast_completion": {
+    "provider": "openai",
+    "model_name": "gpt-3.5-turbo",
+    "temperature": 0.5,
+    "max_tokens": 1024,
+    "top_p": 1.0,
+    "frequency_penalty": 0.0,
+    "presence_penalty": 0.0,
+    "timeout": 15,
+    "max_retries": 2,
+    "use_case": "quick_responses",
+    "cost_per_1k_tokens": {
+      "input": 0.0015,
+      "output": 0.002
+    }
+  },
+  "high_quality": {
+    "provider": "openai",
+    "model_name": "gpt-4-turbo",
+    "temperature": 0.3,
+    "max_tokens": 8192,
+    "top_p": 0.9,
+    "frequency_penalty": 0.1,
+    "presence_penalty": 0.1,
+    "timeout": 120,
+    "max_retries": 3,
+    "use_case": "premium_quality",
+    "cost_per_1k_tokens": {
+      "input": 0.01,
+      "output": 0.03
+    }
+  }
+}

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Production API for Media Mix Model
-FastAPI endpoint for MMM predictions and budget optimization
+Lightweight Production Server for MMM Model
+Simple FastAPI server for serving trained MMM models
 """
 
 import json
@@ -11,10 +11,28 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import List, Dict, Any
 from pathlib import Path
+import os
 
-# Load production model
-MODEL_PATH = "production_mmm_model.joblib"
-model = joblib.load(Path(__file__).parent / "models" / MODEL_PATH)
+# Try to load production model (if available)
+model = None
+MODEL_PATHS = [
+    "models/trained_mmm_model.joblib",  # Standard location
+    "../outputs/trained_models/mmm_model.joblib",  # Runtime location
+    "production_mmm_model.joblib"  # Legacy location
+]
+
+for model_path in MODEL_PATHS:
+    try:
+        if os.path.exists(model_path):
+            model = joblib.load(model_path)
+            print(f"[SUCCESS] Loaded model from: {model_path}")
+            break
+    except Exception as e:
+        continue
+
+if model is None:
+    print("[WARNING] No trained model found. API will return mock predictions.")
+    print("Train a model first using the main API or quick_start.py")
 
 app = FastAPI(title="Media Mix Model API", version="1.0.0")
 
