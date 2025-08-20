@@ -6,7 +6,8 @@ Pydantic models for validating incoming API requests.
 
 from pydantic import BaseModel, Field, validator
 from typing import List, Optional, Dict, Any, Union
-from datetime import datetime, date
+from datetime import datetime
+from datetime import date as DateType
 from enum import Enum
 
 class ChannelType(str, Enum):
@@ -54,13 +55,13 @@ class TimeGranularity(str, Enum):
 class AttributionRequest(BaseModel):
     """Request model for attribution analysis."""
     
-    start_date: date = Field(
+    start_date: DateType = Field(
         ...,
         description="Start date for attribution analysis",
         example="2024-01-01"
     )
     
-    end_date: date = Field(
+    end_date: DateType = Field(
         ...,
         description="End date for attribution analysis", 
         example="2024-12-31"
@@ -178,13 +179,13 @@ class BudgetOptimizationRequest(BaseModel):
 class PerformanceAnalysisRequest(BaseModel):
     """Request model for campaign performance analysis."""
     
-    start_date: date = Field(
+    start_date: DateType = Field(
         ...,
         description="Analysis start date",
         example="2024-01-01"
     )
     
-    end_date: date = Field(
+    end_date: DateType = Field(
         ...,
         description="Analysis end date",
         example="2024-12-31"
@@ -250,13 +251,13 @@ class IncrementalityTestRequest(BaseModel):
         }
     )
     
-    test_start_date: date = Field(
+    test_start_date: DateType = Field(
         ...,
         description="Test start date",
         example="2024-06-01"
     )
     
-    test_end_date: date = Field(
+    test_end_date: DateType = Field(
         ...,
         description="Test end date",
         example="2024-06-30"
@@ -338,13 +339,13 @@ class CrossChannelSynergyRequest(BaseModel):
         example=["social", "display", "video"]
     )
     
-    analysis_start_date: date = Field(
+    analysis_start_date: DateType = Field(
         ...,
         description="Analysis start date",
         example="2024-01-01"
     )
     
-    analysis_end_date: date = Field(
+    analysis_end_date: DateType = Field(
         ...,
         description="Analysis end date",
         example="2024-12-31"

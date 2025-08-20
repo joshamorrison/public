@@ -6,7 +6,8 @@ Pydantic models for API response validation and serialization.
 
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any, Union
-from datetime import datetime, date
+from datetime import datetime
+from datetime import date as DateType
 from enum import Enum
 
 class AnalysisStatus(str, Enum):
@@ -130,12 +131,12 @@ class TrendAnalysis(BaseModel):
 class AnomalyDetection(BaseModel):
     """Anomaly detection results."""
     
-    date: date = Field(description="Date of anomaly")
-    metric: str = Field(description="Metric with anomaly")
-    expected_value: float = Field(description="Expected value")
-    actual_value: float = Field(description="Actual value")
-    anomaly_score: float = Field(description="Anomaly severity score")
-    potential_causes: List[str] = Field(description="Potential causes")
+    date: DateType = Field(..., description="Date of anomaly")
+    metric: str = Field(..., description="Metric with anomaly")
+    expected_value: float = Field(..., description="Expected value")
+    actual_value: float = Field(..., description="Actual value")
+    anomaly_score: float = Field(..., description="Anomaly severity score")
+    potential_causes: List[str] = Field(default_factory=list, description="Potential causes")
 
 class PerformanceAnalysisResponse(BaseModel):
     """Response model for performance analysis."""

@@ -63,6 +63,11 @@ fastparquet>=2023.1.0
 # Data validation and settings
 pydantic>=1.10.0
 
+# ===== API FRAMEWORK =====
+# FastAPI for REST API endpoints
+fastapi>=0.100.0
+uvicorn[standard]>=0.20.0
+
 # ===== DEVELOPMENT & TESTING =====
 # Testing and code quality
 pytest>=7.0.0

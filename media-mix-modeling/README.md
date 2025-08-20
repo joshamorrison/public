@@ -1,4 +1,4 @@
-# # 🚀 Media Mix Modeling & Optimization Platform
+# 🚀 Media Mix Modeling & Optimization Platform
 
 **Advanced MMM with dbt • Real Data • Budget Optimization**
 
@@ -17,6 +17,7 @@ Advanced media mix models and econometric forecasting to optimize campaign spend
 
 ## 🛠️ Technology Stack
 - **🐍 Python** - Core modeling and data processing
+- **⚡ FastAPI** - REST API endpoints for model serving
 - **📈 R** - Econometric modeling and statistical analysis  
 - **🔄 dbt** - Multi-source data transformation and attribution modeling
 - **☁️ AWS SageMaker** - Model training and deployment
@@ -30,6 +31,11 @@ media-mix-modeling/
 ├── requirements.txt            # 📦 Dependencies  
 ├── .env.example               # ⚙️ Configuration
 ├── pyproject.toml             # 📋 Package setup
+├── api/                       # ⚡ FastAPI REST endpoints
+│   ├── main.py                # FastAPI application
+│   ├── routers/               # API route handlers
+│   ├── models/                # Request/response models
+│   └── middleware/            # API middleware
 ├── data/                      # 📊 Multi-source data integration
 │   ├── media_data_client.py   # Kaggle + HuggingFace + Synthetic
 │   └── synthetic/             # Synthetic data generation
@@ -53,55 +59,47 @@ media-mix-modeling/
 
 ## 🚀 Quick Start
 
-Get from clone to MMM optimization in under **5 minutes**:
+Get from clone to MMM optimization in under 5 minutes:
 
-### 1. Clone and Setup
 ```bash
-# Clone the repository
+# 1. Clone and setup
 git clone https://github.com/joshamorrison/public.git
 cd public/media-mix-modeling
-```
 
-### 2. Create Virtual Environment (Recommended)
-```bash
-# Create virtual environment
+# 2. Create virtual environment (recommended)
 python -m venv venv
+source venv/Scripts/activate  # Windows
+# source venv/bin/activate    # macOS/Linux
 
-# Activate virtual environment
-# Windows:
-venv\Scripts\activate
-# macOS/Linux:
-source venv/bin/activate
-```
-
-### 3. Install Dependencies (~2 minutes)
-```bash
+# 3. Install dependencies (~2 minutes)
 pip install -r requirements.txt
-```
 
-### 4. Configure Environment (Optional)
-```bash
-# Copy configuration template
-cp .env.example .env
-# Edit .env with your API keys (optional for demo)
-```
-
-### 5. Run the Demo (~60 seconds)
-```bash
+# 4. Run the demo (~60 seconds)
 python quick_start.py
 ```
 
 **Expected Output:**
 ```
-🚀 MEDIA MIX MODELING & OPTIMIZATION - QUICK START DEMO
-========================================================
+MEDIA MIX MODELING & OPTIMIZATION - QUICK START DEMO
+============================================================
+Advanced MMM with dbt + Real Data + Budget Optimization
+Progressive Enhancement: Local -> APIs -> Cloud Deployment
+
 [OK] Core dependencies available
-[DATA] Using SYNTHETIC data: DEMO quality
-[MMM] Advanced media mix model trained (adstock + saturation)
-[OPT] Budget optimization complete: +18.3% projected ROAS improvement
-[DBT] Attribution models available via dbt transformations
-[RPT] Executive reports generated (JSON, CSV, executive summary)
-🎉 DEMO COMPLETE - Ready for real media data integration!
+[DATA] CHECKING REAL DATA SOURCES
+[OK] Kaggle API: CONNECTED (Marketing Analytics Dataset available)
+[OK] HuggingFace: CONNECTED (Advertising datasets available)
+[MMM] Training advanced econometric MMM...
+[OPTIMIZATION] Budget optimization completed successfully
+[REPORTS] Executive reports generated
+
+============================================================
+MEDIA MIX MODELING DEMO COMPLETE!
+============================================================
+[OK] MMM platform operational with budget optimization
+[OK] Real data integration ready for scaling
+[OK] Production deployment infrastructure available
+Enterprise MMM platform ready for real campaigns!
 ```
 
 ## 📊 Multi-Source Data Strategy
@@ -121,6 +119,27 @@ pip install kaggle
 pip install datasets
 # Add HF_TOKEN to .env
 ```
+
+## ⚡ API Endpoints
+
+The platform includes a comprehensive FastAPI service for programmatic access:
+
+### **Start the API Server**
+```bash
+# In your activated virtual environment
+uvicorn api.main:app --host 0.0.0.0 --port 8000
+```
+
+### **Available Endpoints**
+- **🏥 Health Check**: `GET /health` - Service status and dependencies
+- **📊 Attribution Analysis**: `POST /attribution/analyze` - Multi-touch attribution modeling
+- **🎯 Budget Optimization**: `POST /optimization/optimize` - Multi-objective budget allocation
+- **📈 Performance Analysis**: `POST /performance/analyze` - Campaign performance insights
+- **🔄 Incrementality Testing**: `POST /attribution/incrementality` - Causal impact analysis
+
+### **API Documentation**
+- **Interactive Docs**: http://localhost:8000/docs (Swagger UI)
+- **API Schema**: http://localhost:8000/redoc (ReDoc)
 
 ## 🧠 MMM Model Architecture
 
