@@ -1,0 +1,52 @@
+{
+    "dataset_name": "airline_passengers", 
+    "description": "Classic Airline Passengers Time Series - Monthly totals of international airline passengers (1949-1960)",
+    "source": "Box & Jenkins (1976) Time Series Analysis",
+    "task_type": "time_series_forecasting",
+    "target_variable": "passengers",
+    "features": {
+        "date": {
+            "type": "datetime",
+            "description": "Month and year of observation",
+            "range": ["1949-01-01", "1960-12-01"],
+            "frequency": "monthly"
+        },
+        "passengers": {
+            "type": "numeric",
+            "description": "Number of international airline passengers (thousands)",
+            "range": [104, 622],
+            "units": "thousands of passengers"
+        }
+    },
+    "time_series_properties": {
+        "seasonality": "strong_yearly",
+        "trend": "increasing",
+        "stationarity": "non_stationary",
+        "frequency": "monthly",
+        "length": 144
+    },
+    "size": {
+        "rows": 144,
+        "features": 1,
+        "time_span": "12 years"
+    },
+    "quality_notes": [
+        "Clean dataset with no missing values",
+        "Classic benchmark time series dataset",
+        "Shows clear seasonal pattern and upward trend",
+        "Multiplicative seasonality (seasonal effect grows with trend)"
+    ],
+    "suggested_algorithms": [
+        "ARIMA",
+        "Seasonal ARIMA (SARIMA)",
+        "Exponential Smoothing",
+        "Prophet",
+        "LSTM Neural Networks"
+    ],
+    "business_context": "This classic dataset demonstrates typical business time series patterns: trend and seasonality. Common in demand forecasting, capacity planning, and business analytics.",
+    "patterns": {
+        "trend": "Strong upward trend showing growth in air travel",
+        "seasonality": "Peak travel in summer months (July-August), low in winter",
+        "cyclicality": "Annual cycles with consistent patterns"
+    }
+}

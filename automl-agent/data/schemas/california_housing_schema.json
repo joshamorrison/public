@@ -1,0 +1,75 @@
+{
+    "dataset_name": "california_housing",
+    "description": "California Housing Prices - Real estate data from 1990 California census",
+    "source": "California Department of Statistics, sklearn datasets",
+    "task_type": "regression",
+    "target_variable": "MedHouseVal",
+    "features": {
+        "MedInc": {
+            "type": "numeric",
+            "description": "Median income in block group",
+            "range": [0.4999, 15.0001],
+            "units": "tens of thousands USD"
+        },
+        "HouseAge": {
+            "type": "numeric", 
+            "description": "Median house age in block group",
+            "range": [1.0, 52.0],
+            "units": "years"
+        },
+        "AveRooms": {
+            "type": "numeric",
+            "description": "Average number of rooms per household",
+            "range": [0.846, 141.909]
+        },
+        "AveBedrms": {
+            "type": "numeric",
+            "description": "Average number of bedrooms per household", 
+            "range": [0.333, 34.067]
+        },
+        "Population": {
+            "type": "numeric",
+            "description": "Block group population",
+            "range": [3.0, 35682.0]
+        },
+        "AveOccup": {
+            "type": "numeric",
+            "description": "Average number of household members",
+            "range": [0.692, 1243.333]
+        },
+        "Latitude": {
+            "type": "numeric",
+            "description": "Block group latitude",
+            "range": [32.54, 41.95]
+        },
+        "Longitude": {
+            "type": "numeric",
+            "description": "Block group longitude", 
+            "range": [-124.35, -114.31]
+        },
+        "MedHouseVal": {
+            "type": "numeric",
+            "description": "Target variable - Median house value for California districts",
+            "range": [14999, 500001],
+            "units": "USD"
+        }
+    },
+    "size": {
+        "rows": 20640,
+        "features": 8
+    },
+    "quality_notes": [
+        "Clean dataset with no missing values",
+        "Based on 1990 California census data",
+        "Geographic features (lat/lon) provide spatial context",
+        "Target values are capped at $500,001"
+    ],
+    "suggested_algorithms": [
+        "Random Forest Regressor",
+        "Gradient Boosting (XGBoost, LightGBM)",
+        "Linear Regression",
+        "SVR",
+        "Neural Networks"
+    ],
+    "business_context": "Real estate price prediction is valuable for property valuation, investment decisions, and market analysis. Geographic features make this suitable for spatial analysis."
+}

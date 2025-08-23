@@ -1,0 +1,11 @@
+age,income,education,target
+25,50000,bachelor,0
+35,75000,master,1
+45,100000,phd,1
+22,30000,high_school,0
+55,120000,phd,1
+28,60000,bachelor,0
+40,85000,master,1
+32,45000,bachelor,0
+50,110000,master,1
+29,55000,bachelor,0
